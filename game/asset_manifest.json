@@ -1,0 +1,48 @@
+[
+    {
+        "reference": "player_left",
+        "type": "image",
+        "filename": "images/character_left.png",
+        "origin": {
+            "x": -5,
+            "y": -17
+        }
+    },
+    {
+        "reference": "player_right",
+        "type": "image",
+        "filename": "images/character_right.png",
+        "origin": {
+            "x": -5,
+            "y": -17
+        }
+    },
+    {
+        "reference": "tree",
+        "type": "image",
+        "filename": "images/tree.png",
+        "origin": {
+            "x": -25,
+            "y": -95
+        }
+    },
+    {
+        "reference": "sheep_left",
+        "type": "image",
+        "filename": "images/sheep_left.png",
+        "origin": {
+            "x": -7,
+            "y": -9
+        }
+    },
+    {
+        "reference": "sheep_right",
+        "type": "image",
+        "filename": "images/sheep_right.png",
+        "origin": {
+            "x": -7,
+            "y": -9
+        }
+    }
+
+]
