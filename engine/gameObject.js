@@ -1,5 +1,5 @@
 class GameObject {
-    constructor (engine, image_identifier, location=$V([0,0,1])) {
+    constructor (engine, image_identifier, location=$V([0,0,0])) {
         this.engine = engine;
         this.image_identifier = image_identifier;
         this.location = location;
@@ -20,9 +20,10 @@ class GameObject {
 
     /*
     The Update method is called by the engine and is used to update the state
-    of the GameObject.
+    of the GameObject. Returns true if the object has moved.
      */
     update (delta_time) {
+        return false;
     }
     
     draw () {

@@ -10,7 +10,7 @@ class Player extends GameObject {
     }
 
     update (delta_time) {
-
+        var moved = false;
         // Calculate new direction based on user input
         var v = 0;
         var h = 0;
@@ -20,7 +20,7 @@ class Player extends GameObject {
         if (this.engine.inputManager.right) h+= 1;
 
         // Build velocity vector,
-        var velocity = $V([h,v]).toUnitVector().multiply(this.speed);
+        var velocity = $V([h,v,0]).toUnitVector().multiply(this.speed);
 
         // Update location
         this.location = this.location.add(velocity.multiply(delta_time));
@@ -28,6 +28,11 @@ class Player extends GameObject {
         // Update player image based on new velocity
         if (velocity.e(1) < 0) this.image_identifier = "player_left";
         if (velocity.e(1) > 0) this.image_identifier = "player_right";
+
+        if (velocity.modulus() > 0) {
+            moved = true;
+        }
+        return moved;
     }
 }
 
@@ -42,10 +47,11 @@ class Sheep extends GameObject {
     }
 
     update (delta_time) {
+        var moved = false;
         // Check if it has been enough time to pick a new target location
         if (new Date().getTime() > this.nextTargetTime) {
             this.nextTargetTime += Math.random() * 60 * 1000;
-            this.target = $V([Math.random() * 500 + 10, Math.random() * 400 + 100]);
+            this.target = $V([Math.random() * 700 + 10, Math.random() * 700 + 100,1]);
         }
 
         // Measure distance to player and set target in opposite direction if so
@@ -65,7 +71,9 @@ class Sheep extends GameObject {
             // Update image based on new direction
             if (velocity.e(1) < 0) this.image_identifier = "sheep_left";
             if (velocity.e(1) > 0) this.image_identifier = "sheep_right";
+            moved = true;
         }
+        return moved;
     }
 }
 
@@ -76,20 +84,32 @@ var engine = new Engine("mainCanvas");
 engine.assetManager.load_manifest("game/asset_manifest.json");
 
 // Create Player object
-var player = new Player(engine, $V([600,100]));
+var player = new Player(engine, $V([622,100,1]));
 engine.objectManager.add_object(player);
 
 // Create trees
-for(var i=0; i<25; i++) {
+for(var i=0; i<50; i++) {
     engine.objectManager.add_object(new GameObject(engine, "tree", $V([
-        Math.floor(Math.random()*500+10),
-        Math.floor(Math.random()*400+100)
+        Math.floor(Math.random()*700+10),
+        Math.floor(Math.random()*700+100),
+        1
     ])));
 }
 
 // Create Sheep
-for(var i=0; i<25; i++) {
-    engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*500+10,Math.random()*400+100]), player));
+for(var i=0; i<=1000; i++) {
+    engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*750+10,Math.random()*650+100,1]), player));
+}
+
+for(var x=0; x<800; x+=50) {
+    for(var y=0; y<800; y+=50) {
+        if (Math.random() > 0.3) {
+            engine.objectManager.add_object(new GameObject(engine, "grass", $V([x, y, 0])));
+        } else {
+            engine.objectManager.add_object(new GameObject(engine, "dirt", $V([x, y, 0])));
+        }
+    }
+    
 }
 
 // Start Game

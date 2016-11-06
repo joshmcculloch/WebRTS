@@ -1,12 +1,12 @@
 class Engine {
     constructor (canvas_id) {
-        this.objectManager = new ObjectManager();
+        this.objectManager = new ObjectManager(this);
         this.assetManager = new AssetManager(this);
-        this.inputManager = new InputManager();
+        this.inputManager = new InputManager(this);
         this.canvas = document.getElementById(canvas_id);
         this.context = this.canvas.getContext('2d');
         this.last_update = new Date().getTime()/1000;
-
+        this.debug = false;
     }
 
     start() {
@@ -14,16 +14,11 @@ class Engine {
     }
 
     render() {
-        this.objectManager.gameObjects.sort(function(a,b) {return a.location.e(2) - b.location.e(2);});
+
         engine.context.save();
         this.context.fillStyle = "#6495ED";
         this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
-
-        for(let gameObject of this.objectManager.gameObjects) {
-            engine.context.save();
-            gameObject.draw();
-            engine.context.restore();
-        }
+        this.objectManager.render();
         engine.context.restore();
     }
 
@@ -33,15 +28,15 @@ class Engine {
     }
 
     update() {
-        console.log(this.inputManager.up);
         var current_time = new Date().getTime()/1000;
         var delta_time = current_time - this.last_update;
         this.updateCanvasSize();
-        for(let gameObject of this.objectManager.gameObjects) {
-            gameObject.update(delta_time);
-        }
+        this.objectManager.update(delta_time);
         this.render();
-        setTimeout(this.update.bind(this),20);
+        if (this.debug) {
+            this.objectManager.debug_draw();
+        }
+        setTimeout(this.update.bind(this),10);
         this.last_update = current_time;
     }
 

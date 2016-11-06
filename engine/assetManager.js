@@ -29,7 +29,7 @@ class AssetManager {
         for(let asset of manifest) {
             if (asset["type"] == "image") {
                 this.load_image(asset["filename"], asset["reference"], $V([asset.origin.x,asset.origin.y]));
-            } 
+            }
             else if (asset["type"] == "audio") {
                 this.load_audio(asset["filename"], asset["reference"]);
             }

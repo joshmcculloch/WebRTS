@@ -43,6 +43,32 @@
             "x": -7,
             "y": -9
         }
+    },
+    {
+        "reference": "grass",
+        "type": "image",
+        "filename": "images/cartoon_grass.png",
+        "origin": {
+            "x": -10,
+            "y": -10
+        }
+    },
+    {
+        "reference": "dirt",
+        "type": "image",
+        "filename": "images/cartoon_dirt.png",
+        "origin": {
+            "x": -10,
+            "y": -10
+        }
+    },
+    {
+        "reference": "water",
+        "type": "image",
+        "filename": "images/cartoon_water.png",
+        "origin": {
+            "x": -20,
+            "y": -20
+        }
     }
-
 ]
