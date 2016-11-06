@@ -28,6 +28,11 @@ class ObjectManager {
 
     }
 
+    get_neighbours(location, distance) {
+        return this.cells.get_neighbours(location, distance);
+    }
+
+
 }
 
 class AABB {
@@ -80,6 +85,7 @@ class Cell {
         this.sw = undefined;
         this.dirty = dirty;  // If any of the cells gameObjects move the cell is marked as dirty
         this.error = false;
+        this.checked = false;
     }
 
     in_cell(location) {
@@ -202,6 +208,11 @@ class Cell {
             context.fillStyle = "rgba(255,0,0,1)";
             context.fillRect(this.aabb.x,this.aabb.y, this.aabb.w, this.aabb.h);
         }
+
+        if (this.checked) {
+            context.fillStyle = "rgba(0,255,0,1)";
+            context.fillRect(this.aabb.x,this.aabb.y, this.aabb.w, this.aabb.h);
+        }
     }
 
     clean () {
@@ -263,5 +274,35 @@ class Cell {
             }
             return gameObjectCount;
         }
+    }
+
+    distance_from(location) {
+        var radius = Math.sqrt(
+            Math.pow(this.aabb.w/2,2)+
+            Math.pow(this.aabb.h/2,2));
+        var center = $V([this.aabb.x+this.aabb.w/2, this.aabb.y+this.aabb.h/2,1]);
+        return center.subtract(location).modulus() - radius;
+    }
+
+    get_neighbours(location, distance) {
+        var gameObjects = [];
+        this.checked = false;
+        if (this.distance_from(location) < distance) {
+
+            if (this.leaf) {
+                this.checked = true;
+                for(let gameObject of this.gameObjects) {
+                    if (gameObject.location.subtract(location).modulus() < distance) {
+                        gameObjects.push(gameObject);
+                    }
+                }
+            } else {
+                gameObjects = gameObjects.concat(this.ne.get_neighbours(location,distance));
+                gameObjects = gameObjects.concat(this.se.get_neighbours(location,distance));
+                gameObjects = gameObjects.concat(this.nw.get_neighbours(location,distance));
+                gameObjects = gameObjects.concat(this.sw.get_neighbours(location,distance));
+            }
+        }
+        return gameObjects;
     }
 }

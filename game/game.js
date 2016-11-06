@@ -6,11 +6,43 @@ Josh McCulloch - October 2016
 class Player extends GameObject {
     constructor (engine, location) {
         super (engine, "player_left", location);
-        this.speed = 50;
+        this.speed = 100;
+
+        this.nearby = [];
+        this.next_nearby_check = 0;
+        this.nearby_check_interval = 100; // Check 10 times a second
+    }
+
+    update_nearby() {
+        if (new Date().getTime() > this.next_nearby_check) {
+            this.nearby = this.engine.objectManager.get_neighbours(this.location, 120);
+            this.next_nearby_check = new Date().getTime() + this.nearby_check_interval;
+        }
+    }
+
+    draw () {
+        if (this.engine.debug > 0) {
+            for (let gameObject of this.nearby) {
+                if (gameObject instanceof Sheep) {
+                    this.engine.context.strokeStyle = "red";
+                    this.engine.context.beginPath();
+                    this.engine.context.moveTo(gameObject.location.e(1), gameObject.location.e(2));
+                    this.engine.context.lineTo(this.location.e(1), this.location.e(2));
+                    this.engine.context.stroke()
+                }
+            }
+        }
+        super.draw()
     }
 
     update (delta_time) {
         var moved = false;
+        this.update_nearby();
+        for(let gameObject of this.nearby) {
+            if (gameObject instanceof Sheep) {
+                gameObject.scare(this);
+            }
+        }
         // Calculate new direction based on user input
         var v = 0;
         var h = 0;
@@ -37,9 +69,8 @@ class Player extends GameObject {
 }
 
 class Sheep extends GameObject {
-    constructor (engine,location, player) {
+    constructor (engine,location) {
         super (engine, "sheep_left",location);
-        this.player = player;
         this.speed = 30;
         this.target = location;
         this.nextTargetTime = new Date().getTime() + Math.random()*60*1000;
@@ -54,11 +85,7 @@ class Sheep extends GameObject {
             this.target = $V([Math.random() * 700 + 10, Math.random() * 700 + 100,1]);
         }
 
-        // Measure distance to player and set target in opposite direction if so
-        var playerVector = this.player.location.subtract(this.location);
-        if (playerVector.modulus() < 70) {
-            this.target = this.location.subtract(playerVector);
-        }
+
 
         // Move towards target, stop if within radius of 5
         var targetVector = this.target.subtract(this.location);
@@ -74,6 +101,15 @@ class Sheep extends GameObject {
             moved = true;
         }
         return moved;
+    }
+
+    scare(gameObject) {
+        // Measure distance to player and set target in opposite direction if so
+        var playerVector = gameObject.location.subtract(this.location);
+        var playerDistance = playerVector.modulus()
+        if (playerDistance < 100) {
+            this.target = this.location.subtract(playerVector.toUnitVector().multiply(100-playerDistance));
+        }
     }
 }
 
@@ -98,7 +134,7 @@ for(var i=0; i<50; i++) {
 
 // Create Sheep
 for(var i=0; i<=1000; i++) {
-    engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*750+10,Math.random()*650+100,1]), player));
+    engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*750+10,Math.random()*650+100,1])));
 }
 
 for(var x=0; x<800; x+=50) {

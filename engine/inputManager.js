@@ -15,7 +15,6 @@ class InputManager {
 
     keyHandler(e) {
         e = e || window.event;
-        console.log(e);
         var state = e.type == "keydown";
         if (e.key == 'ArrowRight') {
             this.right = state
@@ -29,7 +28,7 @@ class InputManager {
         else if (e.key == 'ArrowDown') {
             this.down = state
         } else if (e.key == 'd' && e.type == "keydown") {
-            engine.debug = !engine.debug;
+            engine.debug = (engine.debug+1)%3;
         }
     }
 }

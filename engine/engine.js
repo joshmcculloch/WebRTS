@@ -33,7 +33,7 @@ class Engine {
         this.updateCanvasSize();
         this.objectManager.update(delta_time);
         this.render();
-        if (this.debug) {
+        if (this.debug > 1) {
             this.objectManager.debug_draw();
         }
         setTimeout(this.update.bind(this),10);
