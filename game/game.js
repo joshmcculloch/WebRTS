@@ -3,7 +3,7 @@ A Demo application for engine features
 Josh McCulloch - October 2016
  */
 
-var Engine = require("../engine/engine.js");
+var Engine = require("../engine/clientEngine.js");
 
 class Player extends Engine.GameObject {
     constructor (engine, location) {
@@ -116,7 +116,7 @@ class Sheep extends Engine.GameObject {
 }
 
 // Create new engine
-var engine = new Engine.Engine("mainCanvas");
+var engine = new Engine.ClientEngine("mainCanvas");
 
 // Load the assets manifest
 engine.assetManager.load_manifest("game/asset_manifest.json");
