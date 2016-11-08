@@ -1,7 +1,7 @@
 /*
 The InputManager is used to keep track of user input.
  */
-class InputManager {
+exports.InputManager = class {
     constructor (engine) {
         this.up = false;
         this.down = false;

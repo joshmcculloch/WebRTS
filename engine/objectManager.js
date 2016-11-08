@@ -1,7 +1,7 @@
 /*
 The ObjectManager keeps track of all current GameObjects. 
  */
-class ObjectManager {
+exports.ObjectManager = class {
     constructor (engine) {
         this.engine = engine;
         this.cells = new Cell(1, new AABB(-100,-100, 1000, 1000), undefined, 10);
@@ -13,8 +13,8 @@ class ObjectManager {
     }
 
     render() {
-        this.cells.render(engine.context, 0); // Render layer 1
-        this.cells.render(engine.context, 1); // Render layer 2
+        this.cells.render(this.engine.context, 0); // Render layer 1
+        this.cells.render(this.engine.context, 1); // Render layer 2
     }
 
     update(delta_time) {

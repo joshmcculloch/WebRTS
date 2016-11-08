@@ -1,8 +1,15 @@
-class Engine {
+var om = require("./objectManager.js");
+var im = require("./inputManager.js");
+var am = require("./assetManager.js");
+var go = require("./gameObject.js");
+
+exports.GameObject = go.GameObject;
+
+exports.Engine = class {
     constructor (canvas_id) {
-        this.objectManager = new ObjectManager(this);
-        this.assetManager = new AssetManager(this);
-        this.inputManager = new InputManager(this);
+        this.objectManager = new om.ObjectManager(this);
+        this.assetManager = new am.AssetManager(this);
+        this.inputManager = new im.InputManager(this);
         this.canvas = document.getElementById(canvas_id);
         this.context = this.canvas.getContext('2d');
         this.last_update = new Date().getTime()/1000;
@@ -15,11 +22,11 @@ class Engine {
 
     render() {
 
-        engine.context.save();
+        this.context.save();
         this.context.fillStyle = "#6495ED";
         this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
         this.objectManager.render();
-        engine.context.restore();
+        this.context.restore();
     }
 
     updateCanvasSize(width,height) {

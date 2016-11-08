@@ -3,7 +3,9 @@ A Demo application for engine features
 Josh McCulloch - October 2016
  */
 
-class Player extends GameObject {
+var Engine = require("../engine/engine.js");
+
+class Player extends Engine.GameObject {
     constructor (engine, location) {
         super (engine, "player_left", location);
         this.speed = 100;
@@ -68,7 +70,7 @@ class Player extends GameObject {
     }
 }
 
-class Sheep extends GameObject {
+class Sheep extends Engine.GameObject {
     constructor (engine,location) {
         super (engine, "sheep_left",location);
         this.speed = 30;
@@ -114,7 +116,7 @@ class Sheep extends GameObject {
 }
 
 // Create new engine
-var engine = new Engine("mainCanvas");
+var engine = new Engine.Engine("mainCanvas");
 
 // Load the assets manifest
 engine.assetManager.load_manifest("game/asset_manifest.json");
@@ -125,7 +127,7 @@ engine.objectManager.add_object(player);
 
 // Create trees
 for(var i=0; i<50; i++) {
-    engine.objectManager.add_object(new GameObject(engine, "tree", $V([
+    engine.objectManager.add_object(new Engine.GameObject(engine, "tree", $V([
         Math.floor(Math.random()*700+10),
         Math.floor(Math.random()*700+100),
         1
@@ -140,9 +142,9 @@ for(var i=0; i<=1000; i++) {
 for(var x=0; x<800; x+=50) {
     for(var y=0; y<800; y+=50) {
         if (Math.random() > 0.3) {
-            engine.objectManager.add_object(new GameObject(engine, "grass", $V([x, y, 0])));
+            engine.objectManager.add_object(new Engine.GameObject(engine, "grass", $V([x, y, 0])));
         } else {
-            engine.objectManager.add_object(new GameObject(engine, "dirt", $V([x, y, 0])));
+            engine.objectManager.add_object(new Engine.GameObject(engine, "dirt", $V([x, y, 0])));
         }
     }
     

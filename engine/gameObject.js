@@ -1,4 +1,4 @@
-class GameObject {
+exports.GameObject = class {
     constructor (engine, image_identifier, location=$V([0,0,0])) {
         this.engine = engine;
         this.image_identifier = image_identifier;

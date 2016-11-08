@@ -2,7 +2,7 @@
 The AssetManager takes care of loading assets from the server and maintains
 references to a single instance of each asset to be used by all game objects.
  */
-class AssetManager {
+exports.AssetManager = class{
     constructor (engine) {
         this.images = {};
         this.audio = {};
@@ -37,7 +37,7 @@ class AssetManager {
     }
 
     load_image(filename, reference, origin) {
-        this.images[reference] =  new Image_Asset(filename, origin, this.engine);
+        this.images[reference] =  new exports.Image_Asset(filename, origin, this.engine);
 
     }
 
@@ -52,7 +52,7 @@ class AssetManager {
     }
 }
 
-class Image_Asset {
+exports.Image_Asset = class {
 
     constructor (filename, origin, engine) {
         this.origin = origin;
