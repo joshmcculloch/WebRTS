@@ -7,6 +7,7 @@ exports.InputManager = class {
         this.down = false;
         this.left = false;
         this.right = false;
+        this.engine = engine;
         var self = this;
         document.onkeydown = function (e){self.keyHandler(e)};
         document.onkeyup = function (e){self.keyHandler(e)};
@@ -28,7 +29,7 @@ exports.InputManager = class {
         else if (e.key == 'ArrowDown') {
             this.down = state
         } else if (e.key == 'd' && e.type == "keydown") {
-            engine.debug = (engine.debug+1)%3;
+            this.engine.debug = (this.engine.debug+1)%3;
         }
     }
 }

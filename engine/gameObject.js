@@ -31,4 +31,14 @@ exports.GameObject = class {
         this.engine.context.rotate(this.rotation);
         this.engine.assetManager.drawImage(this.image_identifier);
     }
+    
+    say (text, time) {
+        var tb = this.engine.guiLayer.TextBox( text, this.location.add($V([10,-10,0])));
+        if (time > 0) {
+            setTimeout(function () {
+                tb.delete();
+            }, time);
+        }
+        return tb;
+    }
 }

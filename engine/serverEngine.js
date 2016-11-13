@@ -24,4 +24,4 @@ exports.ServerEngine = class extends Engine.BaseEngine {
         this.last_update = current_time;
     }
 
-}
+};

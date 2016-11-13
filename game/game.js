@@ -13,6 +13,7 @@ class Player extends Engine.GameObject {
         this.nearby = [];
         this.next_nearby_check = 0;
         this.nearby_check_interval = 100; // Check 10 times a second
+        this.descriptionBox = this.say("Hello, I'm Joe<br/>My current position is (X,X).",-1);
     }
 
     update_nearby() {
@@ -65,6 +66,12 @@ class Player extends Engine.GameObject {
 
         if (velocity.modulus() > 0) {
             moved = true;
+
+            this.descriptionBox.setLocation(this.location.add($V([20,-20,0])));
+            this.descriptionBox.updateText("Hello, I'm Joe<br/>My current position is ("+
+                Math.floor(this.location.e(1))+","+
+                Math.floor(this.location.e(2))+").");
+
         }
         return moved;
     }
@@ -83,8 +90,9 @@ class Sheep extends Engine.GameObject {
         var moved = false;
         // Check if it has been enough time to pick a new target location
         if (new Date().getTime() > this.nextTargetTime) {
-            this.nextTargetTime += Math.random() * 60 * 1000;
+            this.nextTargetTime += Math.random() * 120 * 1000;
             this.target = $V([Math.random() * 700 + 10, Math.random() * 700 + 100,1]);
+            this.say("baaa", 1000);
         }
 
 
@@ -117,6 +125,7 @@ class Sheep extends Engine.GameObject {
 
 // Create new engine
 var engine = new Engine.ClientEngine("mainCanvas");
+
 
 // Load the assets manifest
 engine.assetManager.load_manifest("game/asset_manifest.json");

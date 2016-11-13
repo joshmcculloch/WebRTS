@@ -1,5 +1,7 @@
 var Engine = require("./engine.js");
 var go = require("./gameObject.js");
+var cc = require("./clientConnection.js");
+var gl = require("./guiManager.js");
 
 exports.GameObject = go.GameObject;
 
@@ -8,7 +10,9 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         super();
         this.canvas = document.getElementById(canvas_id);
         this.context = this.canvas.getContext('2d');
-        this.debug = false;
+        this.debug = 0;
+        //this.connection = new cc.ClientConnection();
+        this.guiLayer = new gl.GuiManager(this.canvas);
     }
 
     render() {

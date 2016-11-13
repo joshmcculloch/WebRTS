@@ -11,7 +11,7 @@ exports.BaseEngine = class {
         this.assetManager = new am.AssetManager(this);
         this.inputManager = new im.InputManager(this);
         this.last_update = new Date().getTime()/1000;
-        this.debug = false;
+        this.debug = 0;
     }
 
     start() {
