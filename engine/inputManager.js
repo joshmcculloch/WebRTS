@@ -29,7 +29,7 @@ exports.InputManager = class {
         else if (e.key == 'ArrowDown') {
             this.down = state
         } else if (e.key == 'd' && e.type == "keydown") {
-            this.engine.debug = (this.engine.debug+1)%3;
+            this.engine.debug = (this.engine.debug+1)%4;
         }
     }
 }

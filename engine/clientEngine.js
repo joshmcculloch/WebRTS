@@ -1,4 +1,5 @@
 var Engine = require("./engine.js");
+var om = require("./objectManager.js");
 var go = require("./gameObject.js");
 var cc = require("./clientConnection.js");
 var gl = require("./guiManager.js");
@@ -13,13 +14,41 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.debug = 0;
         //this.connection = new cc.ClientConnection();
         this.guiLayer = new gl.GuiManager(this.canvas);
+
+        this.statsBox = this.guiLayer.TextBox("Render Count: " + this.objectManager.lastRenderCount, $V([10,10]));
+        this.statsBox.setLocation($V([10,10]),true);
+        this.cameraPos = $V([0,0,0]);
+    }
+
+    cameraToWorld (location) {
+        return location.add(this.cameraPos).subtract($V([this.canvas.width/2, this.camvas.height/2,0]));
+    }
+
+    worldToCamera (location) {
+        return location.subtract(this.cameraPos).add($V([this.canvas.width/2, this.canvas.height/2,0]));
     }
 
     render() {
-        this.context.save();
+        var viewVolumeBorder = 100;
+        var viewVolume = new om.AABB(
+            this.cameraPos.e(1)-this.canvas.width/2-viewVolumeBorder,
+            this.cameraPos.e(2)-this.canvas.height/2-viewVolumeBorder,
+            this.canvas.width+viewVolumeBorder*2,
+            this.canvas.height+viewVolumeBorder*2);
+
+        // Clear the screen
         this.context.fillStyle = "#6495ED";
         this.context.fillRect(0,0,this.canvas.width, this.canvas.height);
-        this.objectManager.render();
+
+        // Save tranformation
+        this.context.save();
+        // Move screen to camera
+        this.context.translate(-this.cameraPos.e(1),-this.cameraPos.e(2));
+        //Center camera on screen
+        this.context.translate(this.canvas.width/2,this.canvas.height/2);
+
+
+        this.objectManager.render(viewVolume);
         this.context.restore();
     }
 
@@ -34,9 +63,16 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.updateCanvasSize();
         this.objectManager.update(delta_time);
         this.render();
-        if (this.debug > 1) {
+        if (this.debug > 2) {
+            this.context.save();
+            this.context.translate(-this.cameraPos.e(1),-this.cameraPos.e(2));
+            this.context.translate(this.canvas.width/2,this.canvas.height/2);
             this.objectManager.debug_draw();
+            this.context.restore();
         }
+
+        this.statsBox.updateText("Render Count: " + this.objectManager.lastRenderCount);
+
         setTimeout(this.update.bind(this),10);
         this.last_update = current_time;
     }

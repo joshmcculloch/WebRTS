@@ -14,6 +14,10 @@ exports.GuiManager = class {
         tb.setLocation(location);
         return tb;
     }
+
+    Login () {
+        new Login(this.guiLayer);
+    }
 };
 
 class Container {
@@ -25,9 +29,13 @@ class Container {
         parent.appendChild(this.element);
     }
 
-    setLocation (location) {
+    setLocation (location, fromTop=false) {
         this.element.style.left = location.e(1)+"px";
-        this.element.style.top = (location.e(2)- this.element.offsetHeight )+"px";
+        if (fromTop) {
+            this.element.style.top = location.e(2) + "px";
+        } else {
+            this.element.style.top = (location.e(2) - this.element.offsetHeight ) + "px";
+        }
     }
 
     delete () {
@@ -46,5 +54,24 @@ class TextBox extends Container {
         this.element.innerHTML = text;
     }
 }
-
 exports.TextBox = TextBox;
+
+
+class Login extends Container {
+    constructor (parent) {
+        super(parent);
+        this.element.innerHTML =
+            '<h3 class="gui">Login</h3>'+
+            '<label for="username">Username: </label>'+
+            '<input type="text" name="username" id="username" value=""><br>' +
+            '<label for="password">Password: </label>'+
+            '<input type="password" name="password" id="password" value=""><br>'+
+            '<button>Login</button><button>Create Account</button>';
+    }
+
+    updateText (text) {
+        this.element.innerHTML = text;
+    }
+}
+exports.Login = Login;
+

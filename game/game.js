@@ -14,6 +14,10 @@ class Player extends Engine.GameObject {
         this.next_nearby_check = 0;
         this.nearby_check_interval = 100; // Check 10 times a second
         this.descriptionBox = this.say("Hello, I'm Joe<br/>My current position is (X,X).",-1);
+
+        this.engine.cameraPos = $V([
+            Math.floor(this.location.e(1)),
+            Math.floor(this.location.e(2)),0]);
     }
 
     update_nearby() {
@@ -66,12 +70,15 @@ class Player extends Engine.GameObject {
 
         if (velocity.modulus() > 0) {
             moved = true;
-
-            this.descriptionBox.setLocation(this.location.add($V([20,-20,0])));
+            this.descriptionBox.setLocation(
+                this.engine.worldToCamera(this.location.add($V([20,-20,0])))
+            );
             this.descriptionBox.updateText("Hello, I'm Joe<br/>My current position is ("+
                 Math.floor(this.location.e(1))+","+
                 Math.floor(this.location.e(2))+").");
-
+            this.engine.cameraPos = $V([
+                Math.floor(this.location.e(1)),
+                Math.floor(this.location.e(2)),0]);
         }
         return moved;
     }
@@ -91,7 +98,7 @@ class Sheep extends Engine.GameObject {
         // Check if it has been enough time to pick a new target location
         if (new Date().getTime() > this.nextTargetTime) {
             this.nextTargetTime += Math.random() * 120 * 1000;
-            this.target = $V([Math.random() * 700 + 10, Math.random() * 700 + 100,1]);
+            this.target = $V([Math.random()*2800+100,Math.random()*2800+100,1]);
             this.say("baaa", 1000);
         }
 
@@ -135,21 +142,21 @@ var player = new Player(engine, $V([622,100,1]));
 engine.objectManager.add_object(player);
 
 // Create trees
-for(var i=0; i<50; i++) {
+for(var i=0; i<500; i++) {
     engine.objectManager.add_object(new Engine.GameObject(engine, "tree", $V([
-        Math.floor(Math.random()*700+10),
-        Math.floor(Math.random()*700+100),
+        Math.floor(Math.random()*2800+100),
+        Math.floor(Math.random()*2800+100),
         1
     ])));
 }
 
 // Create Sheep
-for(var i=0; i<=1000; i++) {
-    engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*750+10,Math.random()*650+100,1])));
+for(var i=0; i<=100; i++) {
+    engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*2800+100,Math.random()*2800+100,1])));
 }
 
-for(var x=0; x<800; x+=50) {
-    for(var y=0; y<800; y+=50) {
+for(var x=0; x<3000; x+=50) {
+    for(var y=0; y<3000; y+=50) {
         if (Math.random() > 0.3) {
             engine.objectManager.add_object(new Engine.GameObject(engine, "grass", $V([x, y, 0])));
         } else {
@@ -158,6 +165,7 @@ for(var x=0; x<800; x+=50) {
     }
     
 }
+
 
 // Start Game
 engine.start();

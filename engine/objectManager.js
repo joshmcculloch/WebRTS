@@ -4,17 +4,20 @@ The ObjectManager keeps track of all current GameObjects.
 exports.ObjectManager = class {
     constructor (engine) {
         this.engine = engine;
-        this.cells = new Cell(1, new AABB(-100,-100, 1000, 1000), undefined, 10);
+        this.cells = new Cell(1, new AABB(-100,-100, 5000, 5000), undefined, 10);
         this.gameObjects = [];
+        this.lastRenderCount = 0;
     }
     add_object (gameObject) {
         this.gameObjects.push(gameObject);
         this.cells.insert(gameObject);
     }
 
-    render() {
-        this.cells.render(this.engine.context, 0); // Render layer 1
-        this.cells.render(this.engine.context, 1); // Render layer 2
+    render (viewVolume) {
+        var renderCount = 0;
+        renderCount += this.cells.render(this.engine.context, 0, viewVolume); // Render layer 1
+        renderCount += this.cells.render(this.engine.context, 1, viewVolume); // Render layer 2
+        this.lastRenderCount = renderCount;
     }
 
     update(delta_time) {
@@ -53,6 +56,14 @@ class AABB {
         }
     }
 
+    is_overlap (other) {
+        if ((this.x+this.w) < other.x) return false; // a is left of b
+        if (this.x > (other.x+other.w)) return false; // a is right of b
+        if ((this.y+this.h) < other.y) return false; // a is above b
+        if (this.y > (other.y+other.h)) return false; // a is below b
+        return true;
+    }
+
     ne () {
         return new AABB(this.x+this.w/2,this.y, this.w/2, this.h/2);
     }
@@ -69,6 +80,7 @@ class AABB {
         return new AABB(this.x,this.y+this.h/2, this.w/2, this.h/2);
     }
 }
+exports.AABB = AABB;
 
 class Cell {
 
@@ -85,7 +97,6 @@ class Cell {
         this.sw = undefined;
         this.dirty = dirty;  // If any of the cells gameObjects move the cell is marked as dirty
         this.error = false;
-        this.checked = false;
     }
 
     in_cell(location) {
@@ -139,23 +150,31 @@ class Cell {
         }
     }
 
-    render(context, layer) {
+    render(context, layer, viewVolume) {
+        var renderCount = 0;
+        if (viewVolume !== undefined && !this.aabb.is_overlap(viewVolume)){
+            //Skip because outside viewVolume
+            return renderCount;
+        }
         if (this.leaf) {
             for(let gameObject of this.gameObjects) {
                 if (gameObject.location.e(3) == layer) {
+                    renderCount++;
                     context.save();
                     gameObject.draw();
                     context.restore();
                 }
             }
-        } else {
-            this.nw.render(context, layer);
-            this.ne.render(context, layer);
-            this.sw.render(context, layer);
-            this.se.render(context, layer);
+        }
+        else {
+            renderCount += this.nw.render(context, layer, viewVolume);
+            renderCount += this.ne.render(context, layer, viewVolume);
+            renderCount += this.sw.render(context, layer, viewVolume);
+            renderCount += this.se.render(context, layer, viewVolume);
 
 
         }
+        return renderCount;
     }
 
     update(delta_time) {
@@ -206,11 +225,6 @@ class Cell {
         }
         if (this.error) {
             context.fillStyle = "rgba(255,0,0,1)";
-            context.fillRect(this.aabb.x,this.aabb.y, this.aabb.w, this.aabb.h);
-        }
-
-        if (this.checked) {
-            context.fillStyle = "rgba(0,255,0,1)";
             context.fillRect(this.aabb.x,this.aabb.y, this.aabb.w, this.aabb.h);
         }
     }
@@ -286,11 +300,9 @@ class Cell {
 
     get_neighbours(location, distance) {
         var gameObjects = [];
-        this.checked = false;
         if (this.distance_from(location) < distance) {
 
             if (this.leaf) {
-                this.checked = true;
                 for(let gameObject of this.gameObjects) {
                     if (gameObject.location.subtract(location).modulus() < distance) {
                         gameObjects.push(gameObject);
