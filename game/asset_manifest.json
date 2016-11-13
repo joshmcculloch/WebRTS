@@ -18,6 +18,24 @@
         }
     },
     {
+        "reference": "player2_left",
+        "type": "image",
+        "filename": "images/character2_left.png",
+        "origin": {
+            "x": -5,
+            "y": -17
+        }
+    },
+    {
+        "reference": "player2_right",
+        "type": "image",
+        "filename": "images/character2_right.png",
+        "origin": {
+            "x": -5,
+            "y": -17
+        }
+    },
+    {
         "reference": "tree",
         "type": "image",
         "filename": "images/tree.png",
