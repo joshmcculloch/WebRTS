@@ -3,6 +3,9 @@ var om = require("./objectManager.js");
 var go = require("./gameObject.js");
 var cc = require("./clientConnection.js");
 var gl = require("./guiManager.js");
+var im = require("./inputManager.js");
+var cam = require("./camera.js");
+var ab = require("./aabb.js");
 
 exports.GameObject = go.GameObject;
 
@@ -12,27 +15,21 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.canvas = document.getElementById(canvas_id);
         this.context = this.canvas.getContext('2d');
         this.debug = 0;
-        //this.connection = new cc.ClientConnection();
+
+        this.inputManager = new im.InputManager(this);
         this.guiLayer = new gl.GuiManager(this.canvas);
+        //this.connection = new cc.ClientConnection();
 
         this.statsBox = this.guiLayer.TextBox("Render Count: " + this.objectManager.lastRenderCount, $V([10,10]));
         this.statsBox.setLocation($V([10,10]),true);
-        this.cameraPos = $V([0,0,0]);
-    }
-
-    cameraToWorld (location) {
-        return location.add(this.cameraPos).subtract($V([this.canvas.width/2, this.camvas.height/2,0]));
-    }
-
-    worldToCamera (location) {
-        return location.subtract(this.cameraPos).add($V([this.canvas.width/2, this.canvas.height/2,0]));
+        this.camera = new cam.Camera(this);
     }
 
     render() {
         var viewVolumeBorder = 100;
-        var viewVolume = new om.AABB(
-            this.cameraPos.e(1)-this.canvas.width/2-viewVolumeBorder,
-            this.cameraPos.e(2)-this.canvas.height/2-viewVolumeBorder,
+        var viewVolume = new ab.AABB(
+            this.camera.x()-this.canvas.width/2-viewVolumeBorder,
+            this.camera.y()-this.canvas.height/2-viewVolumeBorder,
             this.canvas.width+viewVolumeBorder*2,
             this.canvas.height+viewVolumeBorder*2);
 
@@ -43,7 +40,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         // Save tranformation
         this.context.save();
         // Move screen to camera
-        this.context.translate(-this.cameraPos.e(1),-this.cameraPos.e(2));
+        this.context.translate(-this.camera.x(),-this.camera.y());
         //Center camera on screen
         this.context.translate(this.canvas.width/2,this.canvas.height/2);
 
@@ -65,13 +62,14 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.render();
         if (this.debug > 2) {
             this.context.save();
-            this.context.translate(-this.cameraPos.e(1),-this.cameraPos.e(2));
+            this.context.translate(-this.camera.x(),-this.camera.y());
             this.context.translate(this.canvas.width/2,this.canvas.height/2);
             this.objectManager.debug_draw();
             this.context.restore();
         }
 
-        this.statsBox.updateText("Render Count: " + this.objectManager.lastRenderCount);
+        this.statsBox.updateText("Render Count: " + this.objectManager.lastRenderCount + "<br/>"+
+            "Mouse: ("+this.inputManager.mousePos.e(1)+","+this.inputManager.mousePos.e(2)+")");
 
         setTimeout(this.update.bind(this),10);
         this.last_update = current_time;

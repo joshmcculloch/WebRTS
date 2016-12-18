@@ -71,15 +71,19 @@ class Player extends Engine.GameObject {
         if (velocity.modulus() > 0) {
             moved = true;
             this.descriptionBox.setLocation(
-                this.engine.worldToCamera(this.location.add($V([20,-20,0])))
+                this.engine.camera.worldToCamera(this.location.add($V([20,-20,0])))
             );
             this.descriptionBox.updateText("Hello, I'm Joe<br/>My current position is ("+
                 Math.floor(this.location.e(1))+","+
                 Math.floor(this.location.e(2))+").");
-            this.engine.cameraPos = $V([
-                Math.floor(this.location.e(1)),
-                Math.floor(this.location.e(2)),0]);
         }
+
+        this.engine.camera.setLocation($V([
+            Math.floor(this.location.e(1)),
+            Math.floor(this.location.e(2)),0]).add(
+                this.engine.inputManager.mousePos
+                .subtract($V([this.engine.canvas.width/2, this.engine.canvas.height/2,0]))
+                .x(0.2)));
         return moved;
     }
 }
@@ -154,6 +158,8 @@ for(var i=0; i<500; i++) {
 for(var i=0; i<=100; i++) {
     engine.objectManager.add_object(new Sheep(engine, $V([Math.random()*2800+100,Math.random()*2800+100,1])));
 }
+
+engine.objectManager.add_object(new Engine.GameObject(engine, "house", $V([500,500,1])));
 
 for(var x=0; x<3000; x+=50) {
     for(var y=0; y<3000; y+=50) {

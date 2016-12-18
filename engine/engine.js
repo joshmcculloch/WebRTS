@@ -1,5 +1,4 @@
 var om = require("./objectManager.js");
-var im = require("./inputManager.js");
 var am = require("./assetManager.js");
 var go = require("./gameObject.js");
 
@@ -9,7 +8,6 @@ exports.BaseEngine = class {
     constructor () {
         this.objectManager = new om.ObjectManager(this);
         this.assetManager = new am.AssetManager(this);
-        this.inputManager = new im.InputManager(this);
         this.last_update = new Date().getTime()/1000;
         this.debug = 0;
     }

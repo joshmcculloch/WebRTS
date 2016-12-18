@@ -88,5 +88,14 @@
             "x": -20,
             "y": -20
         }
+    },
+    {
+        "reference": "house",
+        "type": "image",
+        "filename": "images/house.png",
+        "origin": {
+            "x": -43,
+            "y": -94
+        }
     }
 ]

@@ -34,7 +34,7 @@ exports.GameObject = class {
     
     say (text, time) {
         var tb = this.engine.guiLayer.TextBox( text,
-            this.engine.worldToCamera(this.location.add($V([10,-10,0]))));
+            this.engine.camera.worldToCamera(this.location.add($V([10,-10,0]))));
         if (time > 0) {
             setTimeout(function () {
                 tb.delete();

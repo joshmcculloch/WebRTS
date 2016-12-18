@@ -7,10 +7,17 @@ exports.InputManager = class {
         this.down = false;
         this.left = false;
         this.right = false;
+        this.mousePos = $V([0,0,0]);
         this.engine = engine;
+
         var self = this;
         document.onkeydown = function (e){self.keyHandler(e)};
         document.onkeyup = function (e){self.keyHandler(e)};
+
+        document.addEventListener('mousemove', function(evt) {
+            var rect = self.engine.canvas.getBoundingClientRect();
+            self.mousePos = $V([evt.clientX - rect.left,evt.clientY - rect.top,0]);
+        }, false);
     }
 
 
