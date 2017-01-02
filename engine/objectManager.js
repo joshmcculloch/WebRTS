@@ -3,12 +3,26 @@ The ObjectManager keeps track of all current GameObjects.
  */
 var ab = require("./aabb.js");
 exports.ObjectManager = class {
+
     constructor (engine) {
         this.engine = engine;
         this.cells = new Cell(1, new ab.AABB(-100,-100, 5000, 5000), undefined, 10);
+        this.object_library = {};
         this.gameObjects = [];
         this.lastRenderCount = 0;
     }
+    register_constructor (engine_class) {
+        var obj = new engine_class(this.engine);
+        this.object_library[obj.object_name]  = engine_class;
+    }
+    create_from_descriptor (description) {
+        if (this.object_library[description.object_name]) {
+            var obj  = new this.object_library[description.object_name](this.engine);
+            obj.from_descriptor(description);
+            this.add_object(obj);
+        }
+    }
+
     add_object (gameObject) {
         this.gameObjects.push(gameObject);
         this.cells.insert(gameObject);
@@ -37,7 +51,7 @@ exports.ObjectManager = class {
     }
 
 
-}
+};
 
 
 

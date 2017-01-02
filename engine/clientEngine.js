@@ -6,6 +6,7 @@ var gl = require("./guiManager.js");
 var im = require("./inputManager.js");
 var cam = require("./camera.js");
 var ab = require("./aabb.js");
+var nm = require("./networkManager.js");
 
 exports.GameObject = go.GameObject;
 
@@ -16,6 +17,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.context = this.canvas.getContext('2d');
         this.debug = 0;
 
+        this.networkManager = new nm.NetworkManager(this);
         this.inputManager = new im.InputManager(this);
         this.guiLayer = new gl.GuiManager(this.canvas);
         //this.connection = new cc.ClientConnection();

@@ -6,6 +6,7 @@ exports.GameObject = go.GameObject;
 
 exports.BaseEngine = class {
     constructor () {
+        this.server = false;
         this.objectManager = new om.ObjectManager(this);
         this.assetManager = new am.AssetManager(this);
         this.last_update = new Date().getTime()/1000;

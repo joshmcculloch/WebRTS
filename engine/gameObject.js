@@ -1,10 +1,37 @@
 exports.GameObject = class {
     constructor (engine, image_identifier, location=$V([0,0,0])) {
+        this.engine_id=-1;
+        this.object_name = "base_object";
         this.engine = engine;
         this.image_identifier = image_identifier;
         this.location = location;
         this.rotation = 0;
         this.last_update = new Date().getTime();
+    }
+
+    to_descriptor() {
+        return {
+            engine_id: this.engine_id,
+            object_name: this.object_name,
+            image_identifier: this.image_identifier,
+            location: {
+                x: this.location.e(1),
+                y: this.location.e(2),
+                z: this.location.e(3)
+            },
+            rotation: this.rotation
+        }
+    }
+
+    from_descriptor (description) {
+        this.engine_id = description.engine_id;
+        this.object_name = description.object_name;
+        this.image_identifier = description.image_identifier;
+        this.location = $V([
+            description.location.x,
+            description.location.y,
+            description.location.z])
+        this.rotation = description.rotation;
     }
 
     /*
@@ -33,13 +60,18 @@ exports.GameObject = class {
     }
     
     say (text, time) {
-        var tb = this.engine.guiLayer.TextBox( text,
-            this.engine.camera.worldToCamera(this.location.add($V([10,-10,0]))));
-        if (time > 0) {
-            setTimeout(function () {
-                tb.delete();
-            }, time);
+        if (this.engine.server) {
+            return {};
+        } else {
+            var tb = this.engine.guiLayer.TextBox(text,
+                this.engine.camera.worldToCamera(this.location.add($V([10, -10, 0]))));
+            if (time > 0) {
+                setTimeout(function () {
+                    tb.delete();
+                }, time);
+            }
+            return tb;
         }
-        return tb;
+
     }
 }
