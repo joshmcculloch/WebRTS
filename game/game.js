@@ -26,5 +26,6 @@ engine.objectManager.register_constructor(go.GameObject);
 engine.objectManager.register_constructor(Player.Player);
 engine.objectManager.register_constructor(Sheep.Sheep);
 
+engine.guiLayer.Login();
 // Start Game
 engine.start();

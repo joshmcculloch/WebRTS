@@ -60,6 +60,7 @@ exports.TextBox = TextBox;
 class Login extends Container {
     constructor (parent) {
         super(parent);
+        var self = this;
         this.element.innerHTML =
             '<h3 class="gui">Login</h3>'+
             '<label for="username">Username: </label>'+
@@ -67,10 +68,19 @@ class Login extends Container {
             '<label for="password">Password: </label>'+
             '<input type="password" name="password" id="password" value=""><br>'+
             '<button>Login</button><button>Create Account</button>';
+        this.element.getElementsByTagName("button")[0].onclick = this.login;
     }
 
     updateText (text) {
         this.element.innerHTML = text;
+    }
+
+    login () {
+        console.log("got creds");
+    }
+
+    create_account () {
+
     }
 }
 exports.Login = Login;

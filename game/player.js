@@ -53,13 +53,16 @@ exports.Player = class extends Engine.GameObject {
 
     update (delta_time) {
         if (!this.descriptionBox) {
-            this.descriptionBox = this.say("Hello, I'm Joe<br/>My current position is (X,X).",-1);
+            this.descriptionBox = this.say("Hello, I'm Joe<br/>My current position is (X,X).", -1);
         }
         var moved = false;
-        this.update_nearby();
-        for(let gameObject of this.nearby) {
-            if (gameObject instanceof Sheep.Sheep) {
-                gameObject.scare(this);
+
+        if (this.engine.server) {
+            this.update_nearby();
+            for (let gameObject of this.nearby) {
+                if (gameObject instanceof Sheep.Sheep) {
+                    gameObject.scare(this);
+                }
             }
         }
         // Calculate new direction based on user input

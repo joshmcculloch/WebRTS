@@ -10,6 +10,8 @@ exports.ObjectManager = class {
         this.object_library = {};
         this.gameObjects = [];
         this.lastRenderCount = 0;
+        this.next_engine_id = 0;
+        this.id_to_objects = {};
     }
     register_constructor (engine_class) {
         var obj = new engine_class(this.engine);
@@ -24,6 +26,17 @@ exports.ObjectManager = class {
     }
 
     add_object (gameObject) {
+        if (this.engine.server && gameObject.engine_id == -1) {
+            gameObject.engine_id = this.next_engine_id++;
+
+        } else {
+            console.log("Waring: GameObject created on client")
+        }
+
+        if (gameObject.engine_id != -1) {
+            this.id_to_objects[gameObject.engine_id] = gameObject;
+        }
+        
         this.gameObjects.push(gameObject);
         this.cells.insert(gameObject);
     }
@@ -50,6 +63,13 @@ exports.ObjectManager = class {
         return this.cells.get_neighbours(location, distance);
     }
 
+    call_remote(object_id, method_name, parameters) {
+        if (this.id_to_objects[object_id]) {
+            this.id_to_objects[object_id].recv_remote_call(method_name, parameters);
+        } else {
+            console.log("Object Not Found", object_id);
+        }
+    }
 
 };
 

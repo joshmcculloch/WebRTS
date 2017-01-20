@@ -34,6 +34,26 @@ exports.GameObject = class {
         this.rotation = description.rotation;
     }
 
+    call_remote (method_name, parameters) {
+        if (this.engine.server) {
+            this.engine.clientManager.broadcast({
+                target: "object_manager",
+                type: "call_remote",
+                engine_id: this.engine_id,
+                method: method_name,
+                parameters: parameters
+            });
+        } else {
+            throw "Not implemented : call remote from client"
+        }
+    }
+
+    recv_remote_call(method_name, parameters) {
+        if(this[method_name]) {
+            this[method_name].apply(this,parameters);
+        }
+    }
+
     /*
     The indepenentUpdate method is designed to allow the engine to update
     GameObjects outside of the regular tick interval. This could be used

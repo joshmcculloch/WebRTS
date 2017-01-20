@@ -29,11 +29,13 @@ exports.Sheep = class extends Engine.GameObject {
     }
 
     update (delta_time) {
+
         var moved = false;
         // Check if it has been enough time to pick a new target location
-        if (new Date().getTime() > this.nextTargetTime) {
+        if (new Date().getTime() > this.nextTargetTime && this.engine.server) {
             this.nextTargetTime += Math.random() * 120 * 1000;
-            this.target = $V([Math.random()*2800+100,Math.random()*2800+100,1]);
+            var target = $V([Math.random()*2800+100,Math.random()*2800+100,1]);
+            this.setTarget(target.e(1), target.e(2));
             this.say("baaa", 1000);
         }
 
@@ -55,12 +57,20 @@ exports.Sheep = class extends Engine.GameObject {
         return moved;
     }
 
+    setTarget(x,y) {
+        if (this.engine.server) {
+            this.call_remote("setTarget",[x,y])
+        }
+        this.target = new $V([x,y,1]);
+    }
+
     scare(gameObject) {
         // Measure distance to player and set target in opposite direction if so
         var playerVector = gameObject.location.subtract(this.location);
         var playerDistance = playerVector.modulus()
         if (playerDistance < 100) {
-            this.target = this.location.subtract(playerVector.toUnitVector().multiply(100-playerDistance));
+            var target = this.location.subtract(playerVector.toUnitVector().multiply(100-playerDistance));
+            this.setTarget(target.e(1), target.e(2));
         }
     }
 }
