@@ -24,18 +24,18 @@ exports.InputManager = class {
     keyHandler(e) {
         e = e || window.event;
         var state = e.type == "keydown";
-        if (e.key == 'ArrowRight') {
+        if (e.key == 'ArrowRight' || e.key == 'd') {
             this.right = state
         }
-        else if (e.key == 'ArrowLeft') {
+        else if (e.key == 'ArrowLeft' || e.key == 'a') {
             this.left = state
         }
-        else if (e.key == 'ArrowUp') {
+        else if (e.key == 'ArrowUp' || e.key == 'w') {
             this.up = state
         }
-        else if (e.key == 'ArrowDown') {
+        else if (e.key == 'ArrowDown' || e.key == 's') {
             this.down = state
-        } else if (e.key == 'd' && e.type == "keydown") {
+        } else if (e.key == 'i' && e.type == "keydown") {
             this.engine.debug = (this.engine.debug+1)%4;
         }
     }

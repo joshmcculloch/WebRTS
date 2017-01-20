@@ -97,5 +97,10 @@
             "x": -43,
             "y": -94
         }
+    },
+    {
+        "reference": "amb1",
+        "type": "audio",
+        "filename": "sound/amb1.mp3"
     }
 ]
