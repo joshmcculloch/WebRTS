@@ -68,7 +68,8 @@ class Login extends Container {
             '<label for="password">Password: </label>'+
             '<input type="password" name="password" id="password" value=""><br>'+
             '<button>Login</button><button>Create Account</button>';
-        this.element.getElementsByTagName("button")[0].onclick = this.login;
+        this.element.getElementsByTagName("button")[0].onclick = function () {self.login();};
+        this.element.getElementsByTagName("button")[1].onclick = function () {self.create_account();};
     }
 
     updateText (text) {
@@ -77,10 +78,15 @@ class Login extends Container {
 
     login () {
         console.log("got creds");
+        console.log(this);
+        console.log(this.element.querySelector("#username").value);
+        console.log(this.element.querySelector("#password").value);
     }
 
     create_account () {
-
+        console.log("create account");
+        console.log(this.element.querySelector("#username").value);
+        console.log(this.element.querySelector("#password").value);
     }
 }
 exports.Login = Login;

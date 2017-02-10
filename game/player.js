@@ -95,10 +95,10 @@ exports.Player = class extends Engine.GameObject {
 
         this.engine.camera.setLocation($V([
             Math.floor(this.location.e(1)),
-            Math.floor(this.location.e(2)),0]).add(
+            Math.floor(this.location.e(2)),0]));/*.add(
             this.engine.inputManager.mousePos
                 .subtract($V([this.engine.canvas.width/2, this.engine.canvas.height/2,0]))
-                .x(0.2)));
+                .x(0.2)));*/
         return moved;
     }
 }
