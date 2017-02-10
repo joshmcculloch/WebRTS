@@ -11,6 +11,16 @@ exports.BaseEngine = class {
         this.assetManager = new am.AssetManager(this);
         this.last_update = new Date().getTime()/1000;
         this.debug = 0;
+        this.scenes = {};
+    }
+
+    registerScene(name, scene) {
+        this.scenes[name] = scene;
+    }
+
+    switchScene(name) {
+        this.objectManager = new om.ObjectManager(this);
+        this.scenes[name]();
     }
 
     start() {

@@ -99,6 +99,15 @@
         }
     },
     {
+        "reference": "welcome",
+        "type": "image",
+        "filename": "images/welcome.png",
+        "origin": {
+            "x": -320,
+            "y": -160
+        }
+    },
+    {
         "reference": "amb1",
         "type": "audio",
         "filename": "sound/amb1.mp3"

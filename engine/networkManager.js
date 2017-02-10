@@ -6,7 +6,7 @@ exports.NetworkManager = class {
         var self = this;
         this.conn.onopen = function (evt) {
             console.log("Opened connection to server.");
-            self.authenticate("yeknom", "password");
+            //self.authenticate("yeknom", "password");
         };
 
         this.conn.onclose = function (evt) {
@@ -21,7 +21,7 @@ exports.NetworkManager = class {
 
         this.conn.onmessage = function (evt) {
             //console.log("message");
-            console.log(evt.data);
+            //console.log(evt.data);
             var message = JSON.parse(evt.data);
             if (message.target && message.target == "object_manager") {
                 if (message.type && message.type == "instansiate") {

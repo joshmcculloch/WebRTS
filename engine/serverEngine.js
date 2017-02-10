@@ -10,7 +10,8 @@ exports.ServerEngine = class extends Engine.BaseEngine {
     constructor () {
         super();
         this.server = true;
-        this.clientManager = new cm.ClientManager(this);
+        this.userManager = new cm.UserManager(this);
+        this.clientManager = new cm.ClientManager(this, this.userManager);
     }
 
     start() {

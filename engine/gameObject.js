@@ -81,7 +81,7 @@ exports.GameObject = class {
     
     say (text, time) {
         if (this.engine.server) {
-            return {};
+            this.call_remote("say",[text, time]);
         } else {
             var tb = this.engine.guiLayer.TextBox(text,
                 this.engine.camera.worldToCamera(this.location.add($V([10, -10, 0]))));
@@ -94,4 +94,4 @@ exports.GameObject = class {
         }
 
     }
-}
+};
