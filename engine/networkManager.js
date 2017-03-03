@@ -2,6 +2,8 @@ exports.NetworkManager = class {
     constructor (engine) {
         this.engine = engine;
         this.conn = new WebSocket("ws://localhost:8080","webrts");
+        this.callbacks = {};
+        this.lastCallbackID = 0;
 
         var self = this;
         this.conn.onopen = function (evt) {
@@ -23,8 +25,15 @@ exports.NetworkManager = class {
             //console.log("message");
             //console.log(evt.data);
             var message = JSON.parse(evt.data);
-            if (message.target && message.target == "object_manager") {
+            if (message.target && message.target == "network_manager") {
+                if (typeof message.callbackID !== 'undefined') {
+                    if(self.callbacks[message.callbackID]) {
+                        self.callbacks[message.callbackID](message);
+                    }
+                }
+            } else if (message.target && message.target == "object_manager") {
                 if (message.type && message.type == "instansiate") {
+                    //console.log("instansiate");
                     if (message.descriptor) {
                         self.engine.objectManager.create_from_descriptor(message.descriptor);
                     }
@@ -39,11 +48,22 @@ exports.NetworkManager = class {
         };
     }
 
-    authenticate(username, password) {
-        this.send({type: "authentication", username: username, password: password});
+    subscribe () {
+        this.send({type: "subscribe"});
+    }
+
+    authenticate(username, password, callback) {
+        var callbackID = this.lastCallbackID++;
+        this.callbacks[callbackID] = callback;
+        this.send({type: "authentication", username: username, password: password, callbackID: callbackID});
+    }
+
+    signup(username, password, callback) {
+
     }
 
     send(object) {
         this.conn.send(JSON.stringify(object));
     }
+
 };

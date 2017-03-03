@@ -19,12 +19,29 @@ exports.ClientEngine = class extends Engine.BaseEngine {
 
         this.networkManager = new nm.NetworkManager(this);
         this.inputManager = new im.InputManager(this);
-        this.guiLayer = new gl.GuiManager(this.canvas);
+        this.guiLayer = new gl.GuiManager(this, this.canvas);
         //this.connection = new cc.ClientConnection();
 
         this.statsBox = this.guiLayer.TextBox("Render Count: " + this.objectManager.lastRenderCount, $V([10,10]));
         this.statsBox.setLocation($V([10,10]),true);
         this.camera = new cam.Camera(this);
+
+        this.scenes = {};
+    }
+
+    registerScene(name, scene) {
+        this.scenes[name] = scene;
+    }
+
+    switchScene(name) {
+        console.log("Switching scene");
+        console.log("Disposing of ",this.objectManager.gameObjects.length," gameobjects");
+        //this.objectManager.clear();
+        console.log(this.scenes);
+        console.log(name);
+        this.objectManager = this.scenes[name].objectManager;
+        this.scenes[name].switchScene();
+
     }
 
     render() {

@@ -3,9 +3,10 @@ var Engine = require("../engine/serverEngine");
 var Sheep = require("../game/sheep.js");
 var Player = require("../game/player.js");
 
+
 var engine = new Engine.ServerEngine();
 
-function CoreGame () {
+
 // Create trees
     for (var i = 0; i < 500; i++) {
         engine.objectManager.add_object(new Engine.GameObject(engine, "tree", $V([
@@ -32,8 +33,5 @@ function CoreGame () {
         }
 
     }
-}
 
-engine.registerScene("core",CoreGame);
-engine.switchScene("core");
 engine.start();

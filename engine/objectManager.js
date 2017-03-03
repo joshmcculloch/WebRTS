@@ -18,7 +18,9 @@ exports.ObjectManager = class {
         this.object_library[obj.object_name]  = engine_class;
     }
     create_from_descriptor (description) {
+        console.log(description);
         if (this.object_library[description.object_name]) {
+            console.log("create from descriptor");
             var obj  = new this.object_library[description.object_name](this.engine);
             obj.from_descriptor(description);
             this.add_object(obj);
@@ -52,6 +54,12 @@ exports.ObjectManager = class {
         this.cells.update(delta_time);
         this.cells.clean();
         this.cells.cull();
+    }
+
+    clear() {
+        this.cells = new Cell(1, new ab.AABB(-100,-100, 5000, 5000), undefined, 10);
+        this.gameObjects = [];
+        this.id_to_objects = {};
     }
 
     debug_draw() {

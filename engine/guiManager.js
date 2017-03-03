@@ -3,7 +3,8 @@
  */
 exports.GuiManager = class {
 
-    constructor (canvas) {
+    constructor (engine, canvas) {
+        this.engine = engine;
         this.guiLayer = document.createElement("div");
         canvas.parentElement.appendChild(this.guiLayer);
         this.guiLayer.className = "gui_layer";
@@ -15,8 +16,8 @@ exports.GuiManager = class {
         return tb;
     }
 
-    Login () {
-        new Login(this.guiLayer);
+    Login (loginAction) {
+        new Login(this.guiLayer, this.engine.networkManager,loginAction);
     }
 };
 
@@ -58,8 +59,10 @@ exports.TextBox = TextBox;
 
 
 class Login extends Container {
-    constructor (parent) {
+    constructor (parent, networkManager, loginAction) {
         super(parent);
+        this.networkManager = networkManager;
+        this.loginAction = loginAction;
         var self = this;
         this.element.innerHTML =
             '<h3 class="gui">Login</h3>'+
@@ -67,7 +70,8 @@ class Login extends Container {
             '<input type="text" name="username" id="username" value=""><br>' +
             '<label for="password">Password: </label>'+
             '<input type="password" name="password" id="password" value=""><br>'+
-            '<button>Login</button><button>Create Account</button>';
+            '<button>Login</button><button>Create Account</button><br>'+
+            '<span class="error_msg"></span>';
         this.element.getElementsByTagName("button")[0].onclick = function () {self.login();};
         this.element.getElementsByTagName("button")[1].onclick = function () {self.create_account();};
     }
@@ -77,10 +81,18 @@ class Login extends Container {
     }
 
     login () {
-        console.log("got creds");
-        console.log(this);
-        console.log(this.element.querySelector("#username").value);
-        console.log(this.element.querySelector("#password").value);
+        var username = this.element.querySelector("#username").value;
+        var password = this.element.querySelector("#password").value;
+        var self = this;
+        this.networkManager.authenticate(username, password,
+            function (message) {
+                if (message.authenticated) {
+                    self.loginAction();
+                    self.element.remove();
+                } else {
+                    self.element.getElementsByClassName("error_msg")[0].innerHTML = "Unable to login";
+                }
+            });
     }
 
     create_account () {

@@ -123,15 +123,6 @@ class Client {
 
             this.clientManager.clients[this.id] = this;
             console.log(message.username," logged in");
-
-            for(let go of this.engine.objectManager.gameObjects) {
-            //var go = this.engine.objectManager.gameObjects[5];
-                this.send({
-                    target: "object_manager",
-                    type: "instansiate",
-                    descriptor: go.to_descriptor()
-                });
-            }
         } else {
             console.log("Unable to authenticate");
         }
@@ -150,6 +141,16 @@ class Client {
             }
         }
     }
+    
+    subscribe () {
+        for (let go of this.engine.objectManager.gameObjects) {
+             this.send({
+                 target: "object_manager",
+                 type: "instansiate",
+                 descriptor: go.to_descriptor()
+             });
+        }
+    }
 
     onMessage (message) {
         console.log(message);
@@ -161,6 +162,8 @@ class Client {
                 this.authenticate(messageData);
             } else if (messageData.type == "signup") {
                 this.signup(messageData);
+            } else if (messageData.type == "subscribe") {
+                this.subscribe();
             }
         }
     }
