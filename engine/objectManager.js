@@ -18,9 +18,7 @@ exports.ObjectManager = class {
         this.object_library[obj.object_name]  = engine_class;
     }
     create_from_descriptor (description) {
-        console.log(description);
         if (this.object_library[description.object_name]) {
-            console.log("create from descriptor");
             var obj  = new this.object_library[description.object_name](this.engine);
             obj.from_descriptor(description);
             this.add_object(obj);
@@ -32,7 +30,6 @@ exports.ObjectManager = class {
             gameObject.engine_id = this.next_engine_id++;
 
         } else {
-            console.log("Waring: GameObject created on client")
         }
 
         if (gameObject.engine_id != -1) {

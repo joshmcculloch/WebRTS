@@ -22,10 +22,16 @@ exports.UserManager = class {
 
     loadCreds () {
         if (fs.existsSync('creds.json')) {
-            var json = fs.readFileSync('creds.json', 'utf8');
-            var obj = JSON.parse(json);
-            this.lastUserID = obj.lastUserID;
-            this.creds = obj.creds;
+            try {
+                var json = fs.readFileSync('creds.json', 'utf8');
+                var obj = JSON.parse(json);
+                this.lastUserID = obj.lastUserID;
+                this.creds = obj.creds;
+            } catch (err) {
+                console.log("Failed to load creds");
+                this.lastUserID = 1;
+                this.creds = {};
+            }
         }
     }
 
