@@ -1,7 +1,6 @@
 var Engine = require("./engine.js");
 var om = require("./objectManager.js");
 var go = require("./gameObject.js");
-var cc = require("./clientConnection.js");
 var gl = require("./guiManager.js");
 var im = require("./inputManager.js");
 var cam = require("./camera.js");
