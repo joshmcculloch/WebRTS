@@ -123,6 +123,11 @@ class Client {
 
             this.clientManager.clients[this.id] = this;
             console.log(message.username," logged in");
+            this.send({target: "network_manager",
+                type: "userParams",
+                id: this.id,
+                username: message.username,
+                authenticated: this.authenticated});
         } else {
             console.log("Unable to authenticate");
         }

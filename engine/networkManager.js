@@ -4,6 +4,9 @@ exports.NetworkManager = class {
         this.conn = new WebSocket("ws://localhost:8080","webrts");
         this.callbacks = {};
         this.lastCallbackID = 0;
+        this.userID = 0;
+        this.username = "";
+        this.authenticated = false;
 
         var self = this;
         this.conn.onopen = function (evt) {
@@ -30,6 +33,11 @@ exports.NetworkManager = class {
                     if(self.callbacks[message.callbackID]) {
                         self.callbacks[message.callbackID](message);
                     }
+                }
+                if (message.type && message.type == "userParams") {
+                    this.userID = message.id;
+                    this.username = message.username;
+                    this.authenticated = message.authenticated;
                 }
             } else if (message.target && message.target == "object_manager") {
                 if (message.type && message.type == "instansiate") {
