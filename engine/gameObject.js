@@ -1,6 +1,7 @@
 exports.GameObject = class {
     constructor (engine, image_identifier, location=$V([0,0,0])) {
         this.engine_id=-1;
+        this.ownerID = -1;
         this.object_name = "base_object";
         this.engine = engine;
         this.image_identifier = image_identifier;
@@ -14,6 +15,7 @@ exports.GameObject = class {
             engine_id: this.engine_id,
             object_name: this.object_name,
             image_identifier: this.image_identifier,
+            ownerID: this.ownerID,
             location: {
                 x: this.location.e(1),
                 y: this.location.e(2),
@@ -27,6 +29,7 @@ exports.GameObject = class {
         this.engine_id = description.engine_id;
         this.object_name = description.object_name;
         this.image_identifier = description.image_identifier;
+        this.ownerID = description.ownerID;
         this.location = $V([
             description.location.x,
             description.location.y,
@@ -43,8 +46,13 @@ exports.GameObject = class {
                 method: method_name,
                 parameters: parameters
             });
-        } else {
-            throw "Not implemented : call remote from client"
+        } else if (this.engine.client){
+            this.engine.networkManager.send({
+                type: "call_remote",
+                engine_id: this.engine_id,
+                method: method_name,
+                parameters: parameters
+            });
         }
     }
 
@@ -52,6 +60,10 @@ exports.GameObject = class {
         if(this[method_name]) {
             this[method_name].apply(this,parameters);
         }
+    }
+    
+    clientOwned (userID) {
+        return this.ownerID == userID;
     }
 
     /*

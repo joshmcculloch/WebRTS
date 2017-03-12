@@ -12,8 +12,14 @@ engine.objectManager.register_constructor(Sheep.Sheep);
 
 if (!engine.loadGameObjects()) {
     console.log("Setting up new world");
+
+    var player = new Player.Player(engine, $V([622, 100, 1]));
+    player.ownerID = 2;
+    engine.objectManager.add_object(player);
+    console.log(player.location);
+
 // Create trees
-    for (var i = 0; i < 50; i++) {
+    for (var i = 0; i < 500; i++) {
         engine.objectManager.add_object(new Engine.GameObject(engine, "tree", $V([
             Math.floor(Math.random() * 2800 + 100),
             Math.floor(Math.random() * 2800 + 100),
@@ -22,7 +28,7 @@ if (!engine.loadGameObjects()) {
     }
 
 // Create Sheep
-    for (var i = 0; i <= 100; i++) {
+    for (var i = 0; i <= 1000; i++) {
         engine.objectManager.add_object(new Sheep.Sheep(engine, $V([Math.random() * 2800 + 100, Math.random() * 2800 + 100, 1])));
     }
 

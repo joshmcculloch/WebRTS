@@ -21,11 +21,11 @@ var CoreGame = new scene.Scene(engine, function (self) {
     self.objectManager.register_constructor(Player.Player);
     self.objectManager.register_constructor(Sheep.Sheep);
     // Create Player object
-    var player = new Player.Player(engine, $V([622, 100, 1]));
-    self.objectManager.add_object(player);
+    //var player = new Player.Player(engine, $V([622, 100, 1]));
+    //self.objectManager.add_object(player);
 
-    var s = new Sheep.Sheep(engine, $V([622, 100, 1]));
-    console.log(s.to_descriptor());
+    //var s = new Sheep.Sheep(engine, $V([622, 100, 1]));
+    //console.log(s.to_descriptor());
 
     self.engine.networkManager.subscribe();
 });

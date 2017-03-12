@@ -26,6 +26,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.camera = new cam.Camera(this);
 
         this.scenes = {};
+        this.client = true;
     }
 
     registerScene(name, scene) {

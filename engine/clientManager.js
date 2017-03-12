@@ -32,6 +32,8 @@ exports.UserManager = class {
                 this.lastUserID = 1;
                 this.creds = {};
             }
+        } else {
+            this.createUser ("yeknom", "password");
         }
     }
 
@@ -114,7 +116,7 @@ class Client {
         this.clientManager = clientManager;
         this.userManager = userManager;
         this.engine = this.clientManager.engine;
-        this.id = 0;
+        this.userID = 0;
         this.authenticated = false;
         var self = this;
         connection.on('message', function (message) {self.onMessage(message)});
@@ -125,13 +127,13 @@ class Client {
     authenticate (message) {
         if (this.userManager.authenticate(message.username, message.password)) {
             this.authenticated = true;
-            this.id = this.userManager.userID(message.username);
+            this.userID = this.userManager.userID(message.username);
 
             this.clientManager.clients[this.id] = this;
             console.log(message.username," logged in");
             this.send({target: "network_manager",
                 type: "userParams",
-                id: this.id,
+                id: this.userID,
                 username: message.username,
                 authenticated: this.authenticated});
         } else {
@@ -144,12 +146,17 @@ class Client {
     }
 
     signup (message) {
+        var success = false
         if (message.username && message.password) {
             if (this.userManager.createUser(message.username, message.password)) {
-
+                success = true;
             } else {
 
+
             }
+        }
+        if(typeof message.callbackID !== 'undefined') {
+            this.send({target: "network_manager", callbackID: message.callbackID, success: success});
         }
     }
     
@@ -164,9 +171,9 @@ class Client {
     }
 
     onMessage (message) {
-        console.log(message);
+        //console.log(message);
         if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data);
+            //console.log('Received Message: ' + message.utf8Data);
             this.connection.sendUTF(message.utf8Data);
             var messageData = JSON.parse(message.utf8Data);
             if (messageData.type == "authentication") {
@@ -175,6 +182,23 @@ class Client {
                 this.signup(messageData);
             } else if (messageData.type == "subscribe") {
                 this.subscribe();
+            } else if (messageData.type == "call_remote") {
+                if (messageData.engine_id !== undefined
+                    && messageData.method !== undefined
+                    && messageData.parameters !== undefined) {
+                    //Check the object exists and the user owns it
+                    if (this.engine.objectManager.id_to_objects[messageData.engine_id]) {
+                        if (this.engine.objectManager.id_to_objects[messageData.engine_id].clientOwned(this.userID)) {
+                            //console.log("attempting remote call", messageData.method, messageData.parameters);
+                            this.engine.objectManager.call_remote(messageData.engine_id, messageData.method, messageData.parameters);
+                        } else {
+                            //console.log("User attempted remote call on non-owned object!");
+                        }
+                    } else {
+                        //console.log("User attempted remote call on object that doesn't exist!");
+                    }
+                }
+
             }
         }
     }

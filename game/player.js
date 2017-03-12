@@ -52,9 +52,9 @@ exports.Player = class extends Engine.GameObject {
     }
 
     update (delta_time) {
-        if (!this.descriptionBox) {
-            this.descriptionBox = this.say("Hello, I'm Joe<br/>My current position is (X,X).", -1);
-        }
+        //if (!this.descriptionBox) {
+        //    this.descriptionBox = this.say("Hello, I'm Joe<br/>My current position is (X,X).", -1);
+        //}
         var moved = false;
 
         if (this.engine.server) {
@@ -65,40 +65,57 @@ exports.Player = class extends Engine.GameObject {
                 }
             }
         }
-        // Calculate new direction based on user input
-        var v = 0;
-        var h = 0;
-        if (this.engine.inputManager.up) v-= 1;
-        if (this.engine.inputManager.down) v+= 1;
-        if (this.engine.inputManager.left) h-= 1;
-        if (this.engine.inputManager.right) h+= 1;
+        
+        if (this.engine.client && this.clientOwned(this.engine.networkManager.userID)) {
+            // Calculate new direction based on user input
+            var v = 0;
+            var h = 0;
+            if (this.engine.inputManager.up) v -= 1;
+            if (this.engine.inputManager.down) v += 1;
+            if (this.engine.inputManager.left) h -= 1;
+            if (this.engine.inputManager.right) h += 1;
+        
 
-        // Build velocity vector,
-        var velocity = $V([h,v,0]).toUnitVector().multiply(this.speed);
+            // Build velocity vector,
+            var velocity = $V([h,v,0]).toUnitVector().multiply(this.speed);
+    
+            // Update location
+            this.location = this.location.add(velocity.multiply(delta_time));
+    
+            // Update player image based on new velocity
+            if (velocity.e(1) < 0) this.image_identifier = "player_left";
+            if (velocity.e(1) > 0) this.image_identifier = "player_right";
+    
+            if (velocity.modulus() > 0) {
+                moved = true;
+                this.call_remote("setLocation", [this.location.e(1),this.location.e(2)]);
+                /*
+                this.descriptionBox.setLocation(
+                    this.engine.camera.worldToCamera(this.location.add($V([20, -20, 0])))
+                );
 
-        // Update location
-        this.location = this.location.add(velocity.multiply(delta_time));
-
-        // Update player image based on new velocity
-        if (velocity.e(1) < 0) this.image_identifier = "player_left";
-        if (velocity.e(1) > 0) this.image_identifier = "player_right";
-
-        if (velocity.modulus() > 0) {
-            moved = true;
-            this.descriptionBox.setLocation(
-                this.engine.camera.worldToCamera(this.location.add($V([20,-20,0])))
-            );
-            this.descriptionBox.updateText("Hello, I'm Joe<br/>My current position is ("+
-                Math.floor(this.location.e(1))+","+
-                Math.floor(this.location.e(2))+").");
+                this.descriptionBox.updateText("Hello, I'm Joe<br/>My current position is (" +
+                    Math.floor(this.location.e(1)) + "," +
+                    Math.floor(this.location.e(2)) + ").");*/
+            }
+            this.engine.camera.setLocation($V([
+                Math.floor(this.location.e(1)),
+                Math.floor(this.location.e(2)), 0]));
+            /*.add(
+             this.engine.inputManager.mousePos
+             .subtract($V([this.engine.canvas.width/2, this.engine.canvas.height/2,0]))
+             .x(0.2)));*/
         }
-
-        this.engine.camera.setLocation($V([
-            Math.floor(this.location.e(1)),
-            Math.floor(this.location.e(2)),0]));/*.add(
-            this.engine.inputManager.mousePos
-                .subtract($V([this.engine.canvas.width/2, this.engine.canvas.height/2,0]))
-                .x(0.2)));*/
         return moved;
+    }
+
+    setLocation(x,y) {
+        if (this.engine.server) {
+            this.call_remote("setLocation",[x,y])
+            this.location = new $V([x, y, 1]);
+        }
+        if (this.engine.client && this.clientOwned(this.engine.networkManager.userID)) {
+            this.location = new $V([x, y, 1]);
+        }
     }
 }
