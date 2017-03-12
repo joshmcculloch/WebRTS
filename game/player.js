@@ -114,7 +114,7 @@ exports.Player = class extends Engine.GameObject {
             this.call_remote("setLocation",[x,y])
             this.location = new $V([x, y, 1]);
         }
-        if (this.engine.client && this.clientOwned(this.engine.networkManager.userID)) {
+        if (this.engine.client && !this.clientOwned(this.engine.networkManager.userID)) {
             this.location = new $V([x, y, 1]);
         }
     }

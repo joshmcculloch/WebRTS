@@ -10,13 +10,14 @@ engine.objectManager.register_constructor(go.GameObject);
 engine.objectManager.register_constructor(Player.Player);
 engine.objectManager.register_constructor(Sheep.Sheep);
 
+engine.clientManager.onSignup = function (engine, userID) {
+    var player = new Player.Player(engine, $V([300, 300, 1]));
+    player.ownerID = userID;
+    engine.objectManager.add_object(player);
+};
+
 if (!engine.loadGameObjects()) {
     console.log("Setting up new world");
-
-    var player = new Player.Player(engine, $V([622, 100, 1]));
-    player.ownerID = 2;
-    engine.objectManager.add_object(player);
-    console.log(player.location);
 
 // Create trees
     for (var i = 0; i < 500; i++) {
@@ -28,7 +29,7 @@ if (!engine.loadGameObjects()) {
     }
 
 // Create Sheep
-    for (var i = 0; i <= 1000; i++) {
+    for (var i = 0; i <= 10; i++) {
         engine.objectManager.add_object(new Sheep.Sheep(engine, $V([Math.random() * 2800 + 100, Math.random() * 2800 + 100, 1])));
     }
 

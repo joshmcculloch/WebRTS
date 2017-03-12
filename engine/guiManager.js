@@ -97,8 +97,18 @@ class Login extends Container {
 
     create_account () {
         console.log("create account");
-        console.log(this.element.querySelector("#username").value);
-        console.log(this.element.querySelector("#password").value);
+        var username = this.element.querySelector("#username").value;
+        var password = this.element.querySelector("#password").value;
+        var self = this;
+        this.networkManager.signup(username, password, 
+            function (message) {
+                console.log(message);
+                if (message.success) {
+                    self.element.getElementsByClassName("error_msg")[0].innerHTML = "Account created, please login";
+                } else {
+                    self.element.getElementsByClassName("error_msg")[0].innerHTML = "Unable to create account";
+                }
+            });
     }
 }
 exports.Login = Login;

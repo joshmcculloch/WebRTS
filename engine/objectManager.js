@@ -28,6 +28,11 @@ exports.ObjectManager = class {
     add_object (gameObject) {
         if (this.engine.server && gameObject.engine_id == -1) {
             gameObject.engine_id = this.next_engine_id++;
+            this.engine.clientManager.broadcast({
+                target: "object_manager",
+                type: "instansiate",
+                descriptor: gameObject.to_descriptor()
+            });
 
         } else {
         }

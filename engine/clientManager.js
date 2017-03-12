@@ -33,7 +33,6 @@ exports.UserManager = class {
                 this.creds = {};
             }
         } else {
-            this.createUser ("yeknom", "password");
         }
     }
 
@@ -51,6 +50,9 @@ exports.UserManager = class {
             this.creds[username] = {id: this.lastUserID+1, password: password};
             this.lastUserID = this.creds[username].id;
             this.saveCreds();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -74,6 +76,7 @@ exports.ClientManager = class  {
         this.userManager = userManager;
         this.userManager.saveCreds();
         this.engine = engine;
+        this.onSignup = function (engine, userID){};
         this.server = http.createServer(function (request, response) {
             console.log((new Date()) + ' Received request for ' + request.url);
             response.writeHead(404);
@@ -104,10 +107,13 @@ exports.ClientManager = class  {
     }
 
     broadcast (object) {
+        console.log("boradcast"+Math.random());
         for(var c in this.clients) {
+            console.log("    "+this.clients[c]);
             this.clients[c].send(object);
         }
     }
+
 };
 
 class Client {
@@ -129,7 +135,7 @@ class Client {
             this.authenticated = true;
             this.userID = this.userManager.userID(message.username);
 
-            this.clientManager.clients[this.id] = this;
+            this.clientManager.clients[this.userID] = this;
             console.log(message.username," logged in");
             this.send({target: "network_manager",
                 type: "userParams",
@@ -149,6 +155,7 @@ class Client {
         var success = false
         if (message.username && message.password) {
             if (this.userManager.createUser(message.username, message.password)) {
+                this.clientManager.onSignup(this.engine, this.userManager.userID(message.username));
                 success = true;
             } else {
 
