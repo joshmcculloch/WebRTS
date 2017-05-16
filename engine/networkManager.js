@@ -1,7 +1,7 @@
 exports.NetworkManager = class {
-    constructor (engine) {
+    constructor (engine, host, protocol) {
         this.engine = engine;
-        this.conn = new WebSocket("ws://localhost:8080","webrts");
+        this.conn = new WebSocket(host, protocol);
         this.callbacks = {};
         this.lastCallbackID = 0;
         this.userID = 0;

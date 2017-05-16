@@ -10,7 +10,7 @@ var go = require("../engine/gameObject.js");
 var scene = require("../engine/scene.js");
 
 // Create new engine
-var engine = new Engine.ClientEngine("mainCanvas");
+var engine = new Engine.ClientEngine("mainCanvas",host="ws://localhost:8080");
 
 // Load the assets manifest
 engine.assetManager.load_manifest("game/asset_manifest.json");

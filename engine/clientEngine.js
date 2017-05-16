@@ -10,13 +10,16 @@ var nm = require("./networkManager.js");
 exports.GameObject = go.GameObject;
 
 exports.ClientEngine = class extends Engine.BaseEngine {
-    constructor (canvas_id) {
+    constructor (canvas_id,host=false) {
         super();
         this.canvas = document.getElementById(canvas_id);
         this.context = this.canvas.getContext('2d');
         this.debug = 0;
 
-        this.networkManager = new nm.NetworkManager(this);
+        this.networkManager = undefined;
+        if (host!=false) {
+            this.networkManager = new nm.NetworkManager(this, host, "webrts");
+        }
         this.inputManager = new im.InputManager(this);
         this.guiLayer = new gl.GuiManager(this, this.canvas);
         //this.connection = new cc.ClientConnection();

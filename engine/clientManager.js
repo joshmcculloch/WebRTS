@@ -107,9 +107,8 @@ exports.ClientManager = class  {
     }
 
     broadcast (object) {
-        console.log("boradcast"+Math.random());
+        console.log("broadcast("+Object.keys(this.clients).length+")"+object);
         for(var c in this.clients) {
-            console.log("    "+this.clients[c]);
             this.clients[c].send(object);
         }
     }
