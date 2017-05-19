@@ -8,6 +8,7 @@ exports.GameObject = class {
         this.location = location;
         this.rotation = 0;
         this.last_update = new Date().getTime();
+        this.light = false;
     }
 
     to_descriptor() {
@@ -89,6 +90,17 @@ exports.GameObject = class {
         this.engine.context.translate(this.location.e(1),this.location.e(2));
         this.engine.context.rotate(this.rotation);
         this.engine.assetManager.drawImage(this.image_identifier);
+    }
+
+    getLight () {
+        if (this.light) {
+            this.light.location = this.location;
+            return this.light;
+        }
+    }
+
+    onclick () {
+        
     }
     
     say (text, time) {

@@ -1,5 +1,6 @@
 var Engine = require("../engine/clientEngine.js");
 var Sheep = require("./sheep.js");
+var lm = require("../engine/lightingManager.js");
 
 exports.Player = class extends Engine.GameObject {
     constructor (engine, location) {
@@ -16,6 +17,8 @@ exports.Player = class extends Engine.GameObject {
         this.engine.cameraPos = $V([
             Math.floor(this.location.e(1)),
             Math.floor(this.location.e(2)),0]);
+
+        this.light = new lm.Light(new lm.LightColour(247, 215, 54), 200, this.location);
     }
 
     to_descriptor() {
@@ -50,6 +53,11 @@ exports.Player = class extends Engine.GameObject {
         }
         super.draw()
     }
+
+    /*
+    light () {
+        return new lm.Light(new lm.LightColour(247, 215, 54), 100, this.location);
+    }*/
 
     update (delta_time) {
         //if (!this.descriptionBox) {

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var Engine = require("../engine/serverEngine");
 var Sheep = require("../game/sheep.js");
+var Gaia = require("../game/gaia.js");
 var Player = require("../game/player.js");
 var go = require("../engine/gameObject.js");
 
@@ -9,6 +10,7 @@ var engine = new Engine.ServerEngine();
 engine.objectManager.register_constructor(go.GameObject);
 engine.objectManager.register_constructor(Player.Player);
 engine.objectManager.register_constructor(Sheep.Sheep);
+engine.objectManager.register_constructor(Gaia.Gaia);
 
 engine.clientManager.onSignup = function (engine, userID) {
     var player = new Player.Player(engine, $V([300, 300, 1]));
@@ -18,6 +20,8 @@ engine.clientManager.onSignup = function (engine, userID) {
 
 if (!engine.loadGameObjects()) {
     console.log("Setting up new world");
+
+    engine.objectManager.add_object(new Gaia.Gaia(engine, $V([1, 1, 1])));
 
 // Create trees
     for (var i = 0; i < 500; i++) {

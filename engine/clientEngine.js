@@ -6,6 +6,7 @@ var im = require("./inputManager.js");
 var cam = require("./camera.js");
 var ab = require("./aabb.js");
 var nm = require("./networkManager.js");
+var lm = require("./lightingManager.js");
 
 exports.GameObject = go.GameObject;
 
@@ -22,7 +23,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         }
         this.inputManager = new im.InputManager(this);
         this.guiLayer = new gl.GuiManager(this, this.canvas);
-        //this.connection = new cc.ClientConnection();
+        this.lightingManager = new lm.LightingManager(this);
 
         this.statsBox = this.guiLayer.TextBox("Render Count: " + this.objectManager.lastRenderCount, $V([10,10]));
         this.statsBox.setLocation($V([10,10]),true);
@@ -68,6 +69,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
 
 
         this.objectManager.render(viewVolume);
+        this.lightingManager.render(viewVolume);
         this.context.restore();
     }
 
@@ -82,7 +84,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.updateCanvasSize();
         this.objectManager.update(delta_time);
         this.render();
-        if (this.debug > 2) {
+        if (this.debug > 0) {
             this.context.save();
             this.context.translate(-this.camera.x(),-this.camera.y());
             this.context.translate(this.canvas.width/2,this.canvas.height/2);

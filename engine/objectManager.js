@@ -166,6 +166,7 @@ class Cell {
                     context.save();
                     gameObject.draw();
                     context.restore();
+                    gameObject.engine.lightingManager.addLight(gameObject.getLight());
                 }
             }
         }
