@@ -2,6 +2,7 @@
 The AssetManager takes care of loading assets from the server and maintains
 references to a single instance of each asset to be used by all game objects.
  */
+var ab = require("./aabb.js");
 exports.AssetManager = class{
     constructor (engine) {
         this.images = {};
@@ -47,8 +48,20 @@ exports.AssetManager = class{
         }
     }
 
+    drawImageAABB(reference) {
+        if (this.images[reference]) {
+            this.images[reference].drawAABB();
+        }
+    }
+
     load_audio(filename, reference) {
         this.audio[reference] =  new Audio(filename);
+    }
+
+    getImage(reference) {
+        if (this.images[reference]) {
+            return this.images[reference];
+        }
     }
 }
 
@@ -58,15 +71,29 @@ exports.Image_Asset = class {
         this.origin = origin;
         this.engine = engine;
         this.loaded = false;
+        this.aabb = new ab.AABB(0,0,1,1);
         this.image = new Image();
         this.image.src = filename;
         var self = this;
         this.image.onload = function () {
             self.loaded = true;
+            self.aabb = new ab.AABB(self.origin.e(1),self.origin.e(2),this.width,this.height);
         }
+    }
+
+    getAABB () {
+        return new  ab.AABB(this.aabb.x, this.aabb.y, this.aabb.w, this.aabb.h);
     }
 
     draw() {
         this.engine.context.drawImage(this.image, this.origin.e(1), this.origin.e(2));
+    }
+
+    drawAABB() {
+        this.engine.context.strokeStyle = "red";
+        this.engine.context.fillStyle = "red";
+        this.engine.context.fillRect(-4,-4,8,8);
+        this.engine.context.strokeRect(this.aabb.x,this.aabb.y,this.aabb.w,this.aabb.h);
+
     }
 }

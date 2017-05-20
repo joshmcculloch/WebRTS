@@ -1,7 +1,9 @@
 var Engine = require("../engine/clientEngine.js");
-exports.Sheep = class extends Engine.GameObject {
+var iobj = require("./interactableObject.js");
+
+exports.Sheep = class extends iobj.Interactable {
     constructor (engine,location) {
-        super (engine, "sheep_left",location);
+        super (engine, "sheep_left",location, true);
         this.engine_id=-1;
         this.object_name = "sheep_object";
         this.speed = 30;

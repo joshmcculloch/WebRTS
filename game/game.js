@@ -7,9 +7,11 @@ var Engine = require("../engine/clientEngine.js");
 var Sheep = require("./sheep.js");
 var Player = require("./player.js");
 var Gaia = require("./gaia.js");
+var iobj = require("./interactableObject.js");
 var go = require("../engine/gameObject.js");
 var scene = require("../engine/scene.js");
 var lm = require("../engine/lightingManager.js");
+var selector = require("./objectSelector.js");
 
 // Create new engine
 var engine = new Engine.ClientEngine("mainCanvas",host="ws://localhost:8080");
@@ -18,11 +20,12 @@ var engine = new Engine.ClientEngine("mainCanvas",host="ws://localhost:8080");
 engine.assetManager.load_manifest("game/asset_manifest.json");
 
 var CoreGame = new scene.Scene(engine, function (self) {
-
+    self.objectManager.add_object(new selector.ObjectSelector(engine));
     self.objectManager.register_constructor(go.GameObject);
     self.objectManager.register_constructor(Player.Player);
     self.objectManager.register_constructor(Sheep.Sheep);
     self.objectManager.register_constructor(Gaia.Gaia);
+    self.objectManager.register_constructor(iobj.Interactable);
     self.engine.lightingManager.ambientLight = new lm.LightColour(0,100,0);
 
     self.engine.networkManager.subscribe();

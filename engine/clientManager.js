@@ -107,7 +107,7 @@ exports.ClientManager = class  {
     }
 
     broadcast (object) {
-        console.log("broadcast("+Object.keys(this.clients).length+")"+object);
+        //console.log("broadcast("+Object.keys(this.clients).length+")",object);
         for(var c in this.clients) {
             this.clients[c].send(object);
         }

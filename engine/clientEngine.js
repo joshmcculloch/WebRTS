@@ -84,7 +84,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.updateCanvasSize();
         this.objectManager.update(delta_time);
         this.render();
-        if (this.debug > 0) {
+        if (this.debug == 2) {
             this.context.save();
             this.context.translate(-this.camera.x(),-this.camera.y());
             this.context.translate(this.canvas.width/2,this.canvas.height/2);

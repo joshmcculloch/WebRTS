@@ -81,6 +81,25 @@ exports.ObjectManager = class {
         }
     }
 
+    get_gameObject_by_name(name){
+        for(let gameObject of this.gameObjects) {
+            if (gameObject.object_name == name) {
+                return gameObject;
+            }
+        }
+        return false;
+    }
+
+    get_gameObjects_by_name(name){
+        var gameObjects = [];
+        for(let gameObject of this.gameObjects) {
+            if (gameObject.object_name == name) {
+                gameObjects.push(gameObject);
+            }
+        }
+        return gameObjects;
+    }
+
 };
 
 

@@ -1,10 +1,11 @@
 var Engine = require("../engine/clientEngine.js");
 var Sheep = require("./sheep.js");
+var iobj = require("./interactableObject.js");
 var lm = require("../engine/lightingManager.js");
 
-exports.Player = class extends Engine.GameObject {
+exports.Player = class extends iobj.Interactable {
     constructor (engine, location) {
-        super (engine, "player_left", location);
+        super (engine, "player_left", location, true);
         this.engine_id=-1;
         this.object_name = "player_object";
         this.speed = 100;
@@ -19,6 +20,7 @@ exports.Player = class extends Engine.GameObject {
             Math.floor(this.location.e(2)),0]);
 
         this.light = new lm.Light(new lm.LightColour(247, 215, 54), 200, this.location);
+        this.selectable = true;
     }
 
     to_descriptor() {
@@ -54,10 +56,9 @@ exports.Player = class extends Engine.GameObject {
         super.draw()
     }
 
-    /*
-    light () {
-        return new lm.Light(new lm.LightColour(247, 215, 54), 100, this.location);
-    }*/
+    onClick(e) {
+        super.onClick(event);
+    }
 
     update (delta_time) {
         //if (!this.descriptionBox) {

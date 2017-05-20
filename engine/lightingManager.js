@@ -47,9 +47,6 @@ exports.LightingManager = class {
             this.lights.push(light);
         }
     }
-
-    
-
 };
 
 class LightColour {

@@ -36,12 +36,30 @@
         }
     },
     {
-        "reference": "tree",
+        "reference": "tree3",
         "type": "image",
-        "filename": "images/tree.png",
+        "filename": "images/tree-3.png",
         "origin": {
             "x": -25,
             "y": -95
+        }
+    },
+    {
+        "reference": "tree1",
+        "type": "image",
+        "filename": "images/tree-1.png",
+        "origin": {
+            "x": -8,
+            "y": -32
+        }
+    },
+    {
+        "reference": "tree2",
+        "type": "image",
+        "filename": "images/tree-2.png",
+        "origin": {
+            "x": -15,
+            "y": -66
         }
     },
     {
@@ -87,6 +105,24 @@
         "origin": {
             "x": -20,
             "y": -20
+        }
+    },
+    {
+        "reference": "rock",
+        "type": "image",
+        "filename": "images/rock.png",
+        "origin": {
+            "x": -10,
+            "y": -12
+        }
+    },
+    {
+        "reference": "camera",
+        "type": "image",
+        "filename": "images/camera.png",
+        "origin": {
+            "x": -10,
+            "y": -10
         }
     },
     {
