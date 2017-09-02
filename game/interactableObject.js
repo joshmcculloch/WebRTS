@@ -46,4 +46,8 @@ exports.Interactable = class extends Engine.GameObject {
         super.draw()
     }
 
+    interact(gameObject) {
+        
+    }
+
 }

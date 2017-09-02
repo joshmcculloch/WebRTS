@@ -63,6 +63,15 @@
         }
     },
     {
+        "reference": "tree4",
+        "type": "image",
+        "filename": "images/tree-4.png",
+        "origin": {
+            "x": -25,
+            "y": -95
+        }
+    },
+    {
         "reference": "sheep_left",
         "type": "image",
         "filename": "images/sheep_left.png",
@@ -139,13 +148,27 @@
         "type": "image",
         "filename": "images/welcome.png",
         "origin": {
-            "x": -320,
-            "y": -160
+            "x": -250,
+            "y": -150
+        }
+    },
+    {
+        "reference": "cloud",
+        "type": "image",
+        "filename": "images/cloud.png",
+        "origin": {
+            "x": -100,
+            "y": -75
         }
     },
     {
         "reference": "amb1",
         "type": "audio",
         "filename": "sound/amb1.mp3"
+    },
+    {
+        "reference": "intro",
+        "type": "audio",
+        "filename": "sound/Path Walk.mp3"
     }
 ]

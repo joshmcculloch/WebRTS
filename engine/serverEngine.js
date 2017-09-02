@@ -63,7 +63,7 @@ exports.ServerEngine = class extends Engine.BaseEngine {
         var delta_time = current_time - this.last_update;
         this.objectManager.update(delta_time);
         
-        setTimeout(this.update.bind(this),10);
+        setTimeout(this.update.bind(this),50);
         this.last_update = current_time;
     }
 

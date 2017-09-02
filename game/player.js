@@ -4,11 +4,19 @@ var iobj = require("./interactableObject.js");
 var lm = require("../engine/lightingManager.js");
 
 exports.Player = class extends iobj.Interactable {
+
+
     constructor (engine, location) {
         super (engine, "player_left", location, true);
+        this.STATES = {
+            idle: 0,
+            walking: 1
+        };
         this.engine_id=-1;
         this.object_name = "player_object";
         this.speed = 100;
+        this.state = this.STATES.idle;
+        this.target = this.location;
 
         this.nearby = [];
         this.next_nearby_check = 0;
@@ -26,12 +34,22 @@ exports.Player = class extends iobj.Interactable {
     to_descriptor() {
         var description = super.to_descriptor();
         description.speed = this.speed;
+        description.state = this.state;
+        description.target = {
+            x: this.target.e(1),
+            y: this.target.e(2),
+            z: this.target.e(3)};
         return description;
     }
 
     from_descriptor (description) {
         super.from_descriptor(description);
         this.speed = description.speed;
+        this.state = description.state;
+        this.target = $V([
+            description.target.x,
+            description.target.y,
+            description.target.z]);
     }
 
     update_nearby() {
@@ -74,48 +92,33 @@ exports.Player = class extends iobj.Interactable {
                 }
             }
         }
-        
-        if (this.engine.client && this.clientOwned(this.engine.networkManager.userID)) {
-            // Calculate new direction based on user input
-            var v = 0;
-            var h = 0;
-            if (this.engine.inputManager.up) v -= 1;
-            if (this.engine.inputManager.down) v += 1;
-            if (this.engine.inputManager.left) h -= 1;
-            if (this.engine.inputManager.right) h += 1;
-        
 
-            // Build velocity vector,
-            var velocity = $V([h,v,0]).toUnitVector().multiply(this.speed);
-    
-            // Update location
+        // Move towards target, stop if within radius of 5
+        var targetVector = this.target.subtract(this.location);
+        if (targetVector.modulus() > 5) {
+
+            // Calculate velocity vector
+            var velocity = targetVector.toUnitVector().multiply(this.speed);
             this.location = this.location.add(velocity.multiply(delta_time));
-    
-            // Update player image based on new velocity
+
+            // Update image based on new direction
             if (velocity.e(1) < 0) this.image_identifier = "player_left";
             if (velocity.e(1) > 0) this.image_identifier = "player_right";
-    
-            if (velocity.modulus() > 0) {
-                moved = true;
-                this.call_remote("setLocation", [this.location.e(1),this.location.e(2)]);
-                /*
-                this.descriptionBox.setLocation(
-                    this.engine.camera.worldToCamera(this.location.add($V([20, -20, 0])))
-                );
+            moved = true;
+        } else {
 
-                this.descriptionBox.updateText("Hello, I'm Joe<br/>My current position is (" +
-                    Math.floor(this.location.e(1)) + "," +
-                    Math.floor(this.location.e(2)) + ").");*/
-            }
-            this.engine.camera.setLocation($V([
-                Math.floor(this.location.e(1)),
-                Math.floor(this.location.e(2)), 0]));
-            /*.add(
-             this.engine.inputManager.mousePos
-             .subtract($V([this.engine.canvas.width/2, this.engine.canvas.height/2,0]))
-             .x(0.2)));*/
         }
         return moved;
+    }
+
+    setState(state) {
+        if (this.engine.server) {
+            this.call_remote("setState",state)
+            this.state = state;
+        }
+        if (this.engine.client && !this.clientOwned(this.engine.networkManager.userID)) {
+            this.state = state;
+        }
     }
 
     setLocation(x,y) {
@@ -126,5 +129,30 @@ exports.Player = class extends iobj.Interactable {
         if (this.engine.client && !this.clientOwned(this.engine.networkManager.userID)) {
             this.location = new $V([x, y, 1]);
         }
+    }
+
+    setTarget(x,y) {
+        // if the function is not needed dont do anything.
+        // this is to stop the message bouncing back and forward
+        console.log("Setting new target!");
+        this.target = new $V([x,y,1]);
+
+        if (this.engine.server) {
+            this.call_remote("setTarget",[x,y]);
+        }
+
+        /*
+        else if (this.engine.client && this.clientOwned(this.engine.networkManager.userID)) {
+            this.call_remote("setTarget",[x,y]);
+        }*/
+    }
+
+    interact(gameObject) {
+        console.log(this.engine.client, this.clientOwned(this.engine.networkManager.userID));
+        if (this.engine.client && this.clientOwned(this.engine.networkManager.userID)) {
+            this.call_remote("setTarget",[gameObject.location.e(1), gameObject.location.e(2)]);
+        }
+
+        //this.setTarget(gameObject.location.e(1), gameObject.location.e(2));
     }
 }

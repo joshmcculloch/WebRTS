@@ -26,7 +26,7 @@ exports.NetworkManager = class {
 
         this.conn.onmessage = function (evt) {
             //console.log("message");
-            //console.log(evt.data);
+
             var message = JSON.parse(evt.data);
             if (message.target && message.target == "network_manager") {
                 if (typeof message.callbackID !== 'undefined') {
@@ -35,19 +35,19 @@ exports.NetworkManager = class {
                     }
                 }
                 if (message.type && message.type == "userParams") {
+                    console.log(evt.data);
                     self.userID = message.id;
                     self.username = message.username;
                     self.authenticated = message.authenticated;
                 }
             } else if (message.target && message.target == "object_manager") {
                 if (message.type && message.type == "instansiate") {
-                    //console.log("instansiate");
-                    if (message.descriptor) {
 
+                    if (message.descriptor) {
                         self.engine.objectManager.create_from_descriptor(message.descriptor);
                     }
                 } else if (message.type && message.type == "call_remote") {
-                    if (message.engine_id && message.method && message.parameters) {
+                    if (message.engine_id >= 0 && message.method && message.parameters) {
                         self.engine.objectManager.call_remote(message.engine_id, message.method, message.parameters);
                     }
                 } else {

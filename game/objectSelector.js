@@ -5,6 +5,17 @@ exports.ObjectSelector = class extends Engine.GameObject {
         super (engine, "", $V([1,1,1]));
         this.object_name = "object_selector";
         this.selectedObject = undefined;
+        var self = this;
+        this.engine.inputManager.registerRightClickHandler(function(event){self.rightClickHandler(event);});
+    }
+
+    rightClickHandler(worldLocation, event) {
+        console.log("rightCkickHandlerWorking");
+        var gameObject = this.engine.objectManager.get_object_at_location(worldLocation);
+        if (gameObject && this.selectedObject) {
+            this.selectedObject.interact(gameObject);
+        }
+        
     }
 
     to_descriptor() {

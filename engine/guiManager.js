@@ -8,6 +8,7 @@ exports.GuiManager = class {
         this.guiLayer = document.createElement("div");
         canvas.parentElement.appendChild(this.guiLayer);
         this.guiLayer.className = "gui_layer";
+        this.guiLayer.oncontextmenu = function(){return false;};
     }
 
     TextBox (text, location) {

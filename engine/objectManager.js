@@ -13,6 +13,15 @@ exports.ObjectManager = class {
         this.next_engine_id = 0;
         this.id_to_objects = {};
     }
+
+    get_object_by_id(id) {
+        if (id >=0 && this.id_to_objects[id]) {
+            return this.id_to_objects[id];
+        } else {
+            return false;
+        }
+    }
+
     register_constructor (engine_class) {
         var obj = new engine_class(this.engine);
         this.object_library[obj.object_name]  = engine_class;
@@ -74,6 +83,7 @@ exports.ObjectManager = class {
     }
 
     call_remote(object_id, method_name, parameters) {
+        //console.log("Found object being called", this.id_to_objects[object_id]);
         if (this.id_to_objects[object_id]) {
             this.id_to_objects[object_id].recv_remote_call(method_name, parameters);
         } else {
@@ -98,6 +108,28 @@ exports.ObjectManager = class {
             }
         }
         return gameObjects;
+    }
+    
+    get_object_at_location(worldLocation) {
+        var maxY = 0;
+        var maxLayer = 0;
+        var selectedGameObject = false;
+        for (let gameObject of this.get_neighbours(worldLocation, 200)) {
+
+            if (gameObject.getAABB().is_inside(worldLocation)) {
+                if ((gameObject.location.e(2) > maxY && gameObject.location.e(3) == maxLayer )
+                    || gameObject.location.e(3) > maxLayer) {
+                    selectedGameObject = gameObject;
+                    maxY = selectedGameObject.location.e(2);
+                    maxLayer = selectedGameObject.location.e(3);
+                }
+            }
+        }
+        return selectedGameObject;
+    }
+
+    inWorld(location) {
+        return this.cells.in_cell(location);
     }
 
 };

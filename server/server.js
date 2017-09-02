@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 var Engine = require("../engine/serverEngine");
 var Sheep = require("../game/sheep.js");
+var Camera = require("../game/cameraObject.js");
 var Gaia = require("../game/gaia.js");
 var Player = require("../game/player.js");
 var iobj = require("../game/interactableObject.js");
 var go = require("../engine/gameObject.js");
+var Tree = require("../game/tree.js");
 
 var engine = new Engine.ServerEngine();
 
@@ -13,11 +15,17 @@ engine.objectManager.register_constructor(iobj.Interactable);
 engine.objectManager.register_constructor(Player.Player);
 engine.objectManager.register_constructor(Sheep.Sheep);
 engine.objectManager.register_constructor(Gaia.Gaia);
+engine.objectManager.register_constructor(Camera.PlayerCamera);
+engine.objectManager.register_constructor(Tree.Tree);
 
 engine.clientManager.onSignup = function (engine, userID) {
     var player = new Player.Player(engine, $V([300, 300, 1]));
     player.ownerID = userID;
     engine.objectManager.add_object(player);
+
+    var camera = new Camera.PlayerCamera(engine, $V([300, 300, 1]));
+    camera.ownerID = userID;
+    engine.objectManager.add_object(camera);
 };
 
 if (!engine.loadGameObjects()) {
@@ -27,39 +35,17 @@ if (!engine.loadGameObjects()) {
 
 // Create trees
     for (var i = 0; i < 200; i++) {
-        engine.objectManager.add_object(new iobj.Interactable(engine, "tree1", $V([
+        var tree = new Tree.Tree(engine, $V([
             Math.floor(Math.random() * 2800 + 100),
             Math.floor(Math.random() * 2800 + 100),
             1
-        ]), true));
-    }
-
-    for (var i = 0; i < 200; i++) {
-        engine.objectManager.add_object(new iobj.Interactable(engine, "tree2", $V([
-            Math.floor(Math.random() * 2800 + 100),
-            Math.floor(Math.random() * 2800 + 100),
-            1
-        ]), true));
-    }
-
-    for (var i = 0; i < 200; i++) {
-        engine.objectManager.add_object(new iobj.Interactable(engine, "tree3", $V([
-            Math.floor(Math.random() * 2800 + 100),
-            Math.floor(Math.random() * 2800 + 100),
-            1
-        ]), true));
-    }
-
-    for (var i = 0; i < 100; i++) {
-        engine.objectManager.add_object(new iobj.Interactable(engine, "rock", $V([
-            Math.floor(Math.random() * 2800 + 100),
-            Math.floor(Math.random() * 2800 + 100),
-            1
-        ]),true));
+        ]));
+        tree.age = Math.random()*3600*15;
+        engine.objectManager.add_object(tree);
     }
 
 // Create Sheep
-    for (var i = 0; i <= 10; i++) {
+    for (var i = 0; i <= 25; i++) {
         engine.objectManager.add_object(new Sheep.Sheep(engine, $V([Math.random() * 2800 + 100, Math.random() * 2800 + 100, 1])));
     }
 

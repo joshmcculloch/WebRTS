@@ -83,7 +83,7 @@ exports.ClientManager = class  {
             response.end();
         });
         var self = this;
-        this.server.listen(8080, function () {
+        this.server.listen(8192, function () {
             console.log((new Date()) + ' Server is listening on port 8080');
         });
 
@@ -107,10 +107,12 @@ exports.ClientManager = class  {
     }
 
     broadcast (object) {
-        //console.log("broadcast("+Object.keys(this.clients).length+")",object);
+        var count = 0;
         for(var c in this.clients) {
             this.clients[c].send(object);
+            count += 1;
         }
+        console.log("Broadcast:", count);
     }
 
 };
@@ -135,7 +137,7 @@ class Client {
             this.userID = this.userManager.userID(message.username);
 
             this.clientManager.clients[this.userID] = this;
-            console.log(message.username," logged in");
+            console.log(message.username," logged in", this.userID);
             this.send({target: "network_manager",
                 type: "userParams",
                 id: this.userID,
@@ -180,7 +182,7 @@ class Client {
         //console.log(message);
         if (message.type === 'utf8') {
             //console.log('Received Message: ' + message.utf8Data);
-            this.connection.sendUTF(message.utf8Data);
+            //this.connection.sendUTF(message.utf8Data);
             var messageData = JSON.parse(message.utf8Data);
             if (messageData.type == "authentication") {
                 this.authenticate(messageData);
@@ -189,6 +191,7 @@ class Client {
             } else if (messageData.type == "subscribe") {
                 this.subscribe();
             } else if (messageData.type == "call_remote") {
+                console.log(messageData);
                 if (messageData.engine_id !== undefined
                     && messageData.method !== undefined
                     && messageData.parameters !== undefined) {
@@ -198,10 +201,11 @@ class Client {
                             //console.log("attempting remote call", messageData.method, messageData.parameters);
                             this.engine.objectManager.call_remote(messageData.engine_id, messageData.method, messageData.parameters);
                         } else {
-                            //console.log("User attempted remote call on non-owned object!");
+                            console.log(this.engine.objectManager.id_to_objects[messageData.engine_id].ownerID, this.userID);
+                            console.log("User attempted remote call on non-owned object!");
                         }
                     } else {
-                        //console.log("User attempted remote call on object that doesn't exist!");
+                        console.log("User attempted remote call on object that doesn't exist!");
                     }
                 }
 
