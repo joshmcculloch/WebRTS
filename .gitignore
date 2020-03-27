@@ -1,0 +1,5 @@
+creds.json
+gamestate.json
+package/*
+package-lock.json
+node_modules/*
