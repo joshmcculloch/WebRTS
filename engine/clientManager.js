@@ -17,7 +17,7 @@ exports.UserManager = class {
             lastUserID: this.lastUserID,
             creds: this.creds
         });
-        fs.writeFile('creds.json', json, 'utf8');
+        fs.writeFileSync('creds.json', json, 'utf8');
     }
 
     loadCreds () {
