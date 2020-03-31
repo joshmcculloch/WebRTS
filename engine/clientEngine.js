@@ -7,6 +7,8 @@ var cam = require("./camera.js");
 var ab = require("./aabb.js");
 var nm = require("./networkManager.js");
 var lm = require("./lightingManager.js");
+var imgui = require("./imGui.js");
+require("sylvester");
 
 exports.GameObject = go.GameObject;
 
@@ -24,6 +26,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
         this.inputManager = new im.InputManager(this);
         this.guiLayer = new gl.GuiManager(this, this.canvas);
         this.lightingManager = new lm.LightingManager(this);
+        this.imGui = new imgui.IMGui(this);
 
         this.statsBox = this.guiLayer.TextBox("Render Count: " + this.objectManager.lastRenderCount, $V([10,10]));
         this.statsBox.setLocation($V([10,10]),true);
