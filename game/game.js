@@ -17,8 +17,8 @@ var lm = require("../engine/lightingManager.js");
 var selector = require("./objectSelector.js");
 
 // Create new engine
-var engine = new Engine.ClientEngine("mainCanvas",host="ws://game.joshm.cc:8192");
-//var engine = new Engine.ClientEngine("mainCanvas",host="ws://localhost:8192");
+//var engine = new Engine.ClientEngine("mainCanvas",host="ws://game.joshm.cc:8192");
+var engine = new Engine.ClientEngine("mainCanvas",host="ws://localhost:8192");
 
 // Load the assets manifest
 engine.assetManager.load_manifest("game/asset_manifest.json");
