@@ -1,0 +1,16 @@
+[
+    {
+        "reference": "ball",
+        "type": "image",
+        "filename": "images/ball.png",
+        "origin": {
+            "x": -20,
+            "y": -20
+        }
+    },
+    {
+        "reference": "amb1",
+        "type": "audio",
+        "filename": "sound/amb1.mp3"
+    }
+]

@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+     <link rel="stylesheet" type="text/css" href="gui.css"> 
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #f0f0f0;
+            margin: 0px;
+            overflow: hidden;
+        }
+        html, body, #mainCanvas {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #mainCanvas {
+            position: absolute;
+
+        }
+        .gui_layer {
+            position: absolute;
+            z-index: 2;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gui_container {
+            position: absolute;
+            padding: 5px;
+            margin: 1em 0 3em;
+            border-width: 1px;
+            border-style: solid;
+            border-color: black;
+            color: #333;
+            background: #fff;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        h3, .gui {
+            margin: 0.1em;
+        }
+
+    </style>
+</head>
+<body>
+<canvas id="mainCanvas" oncontextmenu="return false;"></canvas>
+<script src="bundle.js"></script>
+</body>
+</html>
