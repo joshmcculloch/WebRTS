@@ -8,6 +8,7 @@ package : client
 	cp game/asset_manifest.json package/game/asset_manifest.json
 	cp bundle.js package/bundle.js
 	cp game/index.html package/index.html
+	cp game/gui.css package/gui.css
 	cp -r sound package/sound
 	cp -r images package/images
 

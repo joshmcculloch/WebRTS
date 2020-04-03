@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 var Engine = require("../engine/serverEngine");
-var Sheep = require("../game/sheep.js");
-var Camera = require("../game/cameraObject.js");
-var Gaia = require("../game/gaia.js");
-var Player = require("../game/player.js");
-var iobj = require("../game/interactableObject.js");
+var Sheep = require("./sheep.js");
+var Camera = require("./cameraObject.js");
+var Gaia = require("./gaia.js");
+var Player = require("./player.js");
+var iobj = require("./interactableObject.js");
 var go = require("../engine/gameObject.js");
-var Tree = require("../game/tree.js");
+var Tree = require("./tree.js");
 
 var engine = new Engine.ServerEngine();
 
@@ -45,7 +45,7 @@ if (!engine.loadGameObjects()) {
     }
 
 // Create Sheep
-    for (var i = 0; i <= 25; i++) {
+    for (var i = 0; i <= 500; i++) {
         engine.objectManager.add_object(new Sheep.Sheep(engine, $V([Math.random() * 2800 + 100, Math.random() * 2800 + 100, 1])));
     }
 
