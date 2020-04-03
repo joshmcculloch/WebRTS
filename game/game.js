@@ -44,6 +44,13 @@ var Menu = new scene.Scene(engine, function (self)  {
     }
     self.engine.guiLayer.Login(function () {engine.switchScene("core");});
     self.engine.camera.location = $V([2000,2000,0]);
+
+    var window = self.engine.guiLayer.Window("bottom_buttons");
+    window.add_button("BUTTON!", ()=>{console.log("BUTTON!")},"");
+    window.add_button("BUTTON!", ()=>{console.log("BUTTON!")},"");
+    window.add_button("BUTTON!", ()=>{console.log("BUTTON!")},"");
+    window.add_button("BUTTON!", ()=>{console.log("BUTTON!")},"");
+    console.log("Created window")
 });
 
 

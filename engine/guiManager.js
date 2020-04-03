@@ -11,6 +11,10 @@ exports.GuiManager = class {
         this.guiLayer.oncontextmenu = function(){return false;};
     }
 
+    Window (_class) {
+      return new Window(this.guiLayer,_class);
+    }
+
     TextBox (text, location) {
         var tb = new TextBox(this.guiLayer, text);
         tb.setLocation(location);
@@ -101,7 +105,7 @@ class Login extends Container {
         var username = this.element.querySelector("#username").value;
         var password = this.element.querySelector("#password").value;
         var self = this;
-        this.networkManager.signup(username, password, 
+        this.networkManager.signup(username, password,
             function (message) {
                 console.log(message);
                 if (message.success) {
@@ -114,3 +118,29 @@ class Login extends Container {
 }
 exports.Login = Login;
 
+
+class Window extends Container {
+
+  constructor (parent, _class) {
+      super(parent);
+      this.element.classList.add(_class);
+  }
+
+  add_button(text, onclick, _class) {
+      var button =  document.createElement('input');
+      button.value = text;
+      button.type = "button";
+      button.className = _class;
+      button.onclick = onclick;
+      this.element.appendChild(button);
+  }
+
+  add_slider(text, min, max, _class) {
+
+  }
+
+  add_text(text, _class) {
+
+  }
+
+}
