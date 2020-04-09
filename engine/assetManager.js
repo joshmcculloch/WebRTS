@@ -58,6 +58,25 @@ exports.AssetManager = class{
         this.audio[reference] =  new Audio(filename);
     }
 
+    play_audio_once(reference) {
+      var cAudio = this.audio[reference].cloneNode();
+      cAudio.play();
+    }
+
+    play_audio_loop(reference) {
+      if (this.audio[reference].paused) {
+        this.audio[reference].play();
+        this.audio[reference].loop = true;
+      }
+    }
+
+    stop_audio_loop(reference) {
+      if (reference in this.audio) {
+        this.audio[reference].pause();
+      }
+
+    }
+
     getImage(reference) {
         if (this.images[reference]) {
             return this.images[reference];
