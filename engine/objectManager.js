@@ -1,12 +1,13 @@
 /*
-The ObjectManager keeps track of all current GameObjects. 
+The ObjectManager keeps track of all current GameObjects.
  */
 var ab = require("./aabb.js");
 exports.ObjectManager = class {
 
     constructor (engine) {
         this.engine = engine;
-        this.cells = new Cell(1, new ab.AABB(-100,-100, 5000, 5000), undefined, 10);
+        //this.storage_engine = new Cell(1, new ab.AABB(-100,-100, 5000, 5000), undefined, 10);
+        this.storage_engine = new SparseGrid(500);
         this.object_library = {};
         this.gameObjects = [];
         this.lastRenderCount = 0;
@@ -49,37 +50,40 @@ exports.ObjectManager = class {
         if (gameObject.engine_id != -1) {
             this.id_to_objects[gameObject.engine_id] = gameObject;
         }
-        
+
         this.gameObjects.push(gameObject);
-        this.cells.insert(gameObject);
+        //throw "Under lying data structure not implemented"
+        this.storage_engine.insert(gameObject);
     }
 
     render (viewVolume) {
         var renderCount = 0;
-        renderCount += this.cells.render(this.engine.context, 0, viewVolume); // Render layer 1
-        renderCount += this.cells.render(this.engine.context, 1, viewVolume); // Render layer 2
+        renderCount += this.storage_engine.render(this.engine.context, 0, viewVolume); // Render layer 1
+        renderCount += this.storage_engine.render(this.engine.context, 1, viewVolume); // Render layer 2
         this.lastRenderCount = renderCount;
     }
 
     update(delta_time) {
-        this.cells.update(delta_time);
-        this.cells.clean();
-        this.cells.cull();
+        this.storage_engine.update(delta_time);
+        if (this.storage_engine instanceof Cell) {
+          this.storage_engine.clean();
+          this.storage_engine.cull();
+        }
     }
 
     clear() {
-        this.cells = new Cell(1, new ab.AABB(-100,-100, 5000, 5000), undefined, 10);
+        this.storage_engine = new Cell(1, new ab.AABB(-100,-100, 5000, 5000), undefined, 10);
         this.gameObjects = [];
         this.id_to_objects = {};
     }
 
     debug_draw() {
-        this.cells.debug_draw(this.engine.context);
+        this.storage_engine.debug_draw(this.engine.context);
 
     }
 
     get_neighbours(location, distance) {
-        return this.cells.get_neighbours(location, distance);
+        return this.storage_engine.get_neighbours(location, distance);
     }
 
     call_remote(object_id, method_name, parameters) {
@@ -109,7 +113,7 @@ exports.ObjectManager = class {
         }
         return gameObjects;
     }
-    
+
     get_object_at_location(worldLocation) {
         var maxY = 0;
         var maxLayer = 0;
@@ -129,16 +133,138 @@ exports.ObjectManager = class {
     }
 
     inWorld(location) {
-        return this.cells.in_cell(location);
+        return this.storage_engine.in_cell(location);
     }
 
 };
 
+class StorageEngine {
+
+    constructor () {
+    }
+
+    insert (gameObject) {
+      throw "Under lying data structure not implemented"
+    }
+
+    render (layer, viewVolume) {
+      throw "Under lying data structure not implemented"
+    }
+
+    update (delta_time) {
+      throw "Under lying data structure not implemented"
+    }
+
+    get_neighbours(location, distance) {
+      throw "Under lying data structure not implemented"
+    }
+}
+
+class SparseGrid extends StorageEngine {
+
+    constructor (cell_size) {
+      super();
+      this.cell_size = cell_size;
+      this.cells = {};
+      this.gameObjects = new Set();
+    }
+
+    clear() {
+      this.cells = {};
+      this.gameObjects = new Set();
+    }
+
+    location_to_cell_key(location) {
+      var cell_x = Math.floor(location.e(1)/this.cell_size)
+      var cell_y = Math.floor(location.e(2)/this.cell_size)
+      return [cell_x,cell_y]
+    }
+
+    insert (gameObject) {
+      var key = this.location_to_cell_key(gameObject.location);
+      if (!(key in this.cells)) {
+        this.cells[key] = [];
+      }
+      this.cells[key].push(gameObject);
+      this.gameObjects.add(gameObject);
+      console.log("inserting at", key)
+    }
+
+    remove (gameObject) {
+
+    }
+
+    render (context, layer, viewVolume) {
+      var top   = Math.floor((viewVolume.y)/this.cell_size);
+      var bottom = Math.floor((viewVolume.y + viewVolume.h + this.cell_size)/this.cell_size);
+      var left  = Math.floor((viewVolume.x)/this.cell_size);
+      var right = Math.floor((viewVolume.x + viewVolume.w + this.cell_size)/this.cell_size);
+      console.log(viewVolume.x,viewVolume.y,this.cell_size)
+
+      var renderCount = 0;
+      for (var y=top; y<=bottom;y++) {
+        for (var x=left;x<=right;x++) {
+          for(let gameObject of this.cells[[x,y]]) {
+            if (gameObject.location.e(3) == layer) {
+              renderCount++;
+              context.save();
+              gameObject.draw();
+              context.restore();
+              //gameObject.engine.lightingManager.addLight(gameObject.getLight());
+            }
+          }
+        }
+      }
+      return renderCount;
+    }
+
+    update (delta_time) {
+        for (let gameObject of this.gameObjects) {
+
+          var init_key = this.location_to_cell_key(gameObject.location);
+          gameObject.update(delta_time)
+          var updated_key = this.location_to_cell_key(gameObject.location);
+
+          // if update the gameobjects cell if it has moved outside its initial one
+          if (init_key[0] != updated_key[0] ||  init_key[1] != updated_key[1]) {
+            var index = this.cells[init_key].indexOf(gameObject);
+            if (index > -1) {
+              this.cells[init_key].splice(index, 1);
+              this.cells[updated_key].push(gameObject);
+            }
+            else {
+              throw "Unable to find gameobjects in initial cell"
+            }
+          }
+        }
+    }
+
+    get_neighbours(location, distance) {
+      var top    = Math.floor((location.y - distance)/this.cell_size);
+      var bottom = Math.floor((location.y + distance)/this.cell_size);
+      var left   = Math.floor((location.x - distance)/this.cell_size);
+      var right  = Math.floor((location.x + distance)/this.cell_size);
+
+      var gameObjects = [];
+      for (var y=top; y<=bottom;y++) {
+        for (var x=left;x<=right;x++) {
+          for(let gameObject of this.cells[[x,y]]) {
+            if (gameObject.location.subtract(location).modulus() < distance) {
+              gameObjects.push(gameObject);
+            }
+          }
+        }
+      }
+      return gameObjects;
+    }
+}
 
 
-class Cell {
+class Cell extends StorageEngine {
+    /* Despite the name "Cell" this is actually a quad tree*/
 
     constructor (max_objects, aabb, parent, min_size, dirty=false) {
+        super();
         this.parent = parent;
         this.max_objects = max_objects;
         this.min_size = min_size;
