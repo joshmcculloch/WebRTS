@@ -1,3 +1,5 @@
+var ab = require("./aabb.js");
+
 exports.GameObject = class {
     constructor (engine, image_identifier, location=$V([0,0,0])) {
         this.engine_id=-1;
@@ -62,7 +64,7 @@ exports.GameObject = class {
             this[method_name].apply(this,parameters);
         }
     }
-    
+
     clientOwned (userID) {
         return this.ownerID == userID;
     }
@@ -85,12 +87,12 @@ exports.GameObject = class {
     update (delta_time) {
         return false;
     }
-    
+
     draw () {
         this.engine.context.translate(this.location.e(1),this.location.e(2));
         this.engine.context.rotate(this.rotation);
         this.engine.assetManager.drawImage(this.image_identifier);
-        
+
         if (this.engine.debug == 1) {
             this.engine.assetManager.drawImageAABB(this.image_identifier);
         }
@@ -102,24 +104,25 @@ exports.GameObject = class {
             return this.light;
         }
     }
-    
+
     getAABB () {
         var image = this.engine.assetManager.getImage(this.image_identifier);
-        if (image != false) {
+        if (image != undefined) {
             var aabb = image.getAABB()
             aabb.x += this.location.e(1);
             aabb.y += this.location.e(2);
             return aabb;
         }
         else {
-            return false;
+            throw "where do you want me to get an aabb from?";
+            return new ab.AABB(this.location.e(1),this.location.e(2),10,10);
         }
     }
 
     onClick (event) {
-        
+
     }
-    
+
     say (text, time) {
         if (this.engine.server) {
             this.call_remote("say",[text, time]);
