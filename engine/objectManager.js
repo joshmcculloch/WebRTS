@@ -199,18 +199,19 @@ class SparseGrid extends StorageEngine {
       var bottom = Math.floor((viewVolume.y + viewVolume.h + this.cell_size)/this.cell_size);
       var left  = Math.floor((viewVolume.x)/this.cell_size);
       var right = Math.floor((viewVolume.x + viewVolume.w + this.cell_size)/this.cell_size);
-      console.log(viewVolume.x,viewVolume.y,this.cell_size)
 
       var renderCount = 0;
       for (var y=top; y<=bottom;y++) {
         for (var x=left;x<=right;x++) {
-          for(let gameObject of this.cells[[x,y]]) {
-            if (gameObject.location.e(3) == layer) {
-              renderCount++;
-              context.save();
-              gameObject.draw();
-              context.restore();
-              //gameObject.engine.lightingManager.addLight(gameObject.getLight());
+          if ([x,y] in this.cells) {
+            for(let gameObject of this.cells[[x,y]]) {
+              if (gameObject.location.e(3) == layer) {
+                renderCount++;
+                context.save();
+                gameObject.draw();
+                context.restore();
+                //gameObject.engine.lightingManager.addLight(gameObject.getLight());
+              }
             }
           }
         }
@@ -227,6 +228,11 @@ class SparseGrid extends StorageEngine {
 
           // if update the gameobjects cell if it has moved outside its initial one
           if (init_key[0] != updated_key[0] ||  init_key[1] != updated_key[1]) {
+
+            // if the new cell doesn't exsist, create it
+            if (!(updated_key in this.cells)) {
+              this.cells[updated_key] = [];
+            }
             var index = this.cells[init_key].indexOf(gameObject);
             if (index > -1) {
               this.cells[init_key].splice(index, 1);
@@ -248,9 +254,11 @@ class SparseGrid extends StorageEngine {
       var gameObjects = [];
       for (var y=top; y<=bottom;y++) {
         for (var x=left;x<=right;x++) {
-          for(let gameObject of this.cells[[x,y]]) {
-            if (gameObject.location.subtract(location).modulus() < distance) {
-              gameObjects.push(gameObject);
+          if ([x,y] in this.cells) {
+            for(let gameObject of this.cells[[x,y]]) {
+              if (gameObject.location.subtract(location).modulus() < distance) {
+                gameObjects.push(gameObject);
+              }
             }
           }
         }
