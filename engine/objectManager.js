@@ -246,11 +246,10 @@ class SparseGrid extends StorageEngine {
     }
 
     get_neighbours(location, distance) {
-      var top    = Math.floor((location.y - distance)/this.cell_size);
-      var bottom = Math.floor((location.y + distance)/this.cell_size);
-      var left   = Math.floor((location.x - distance)/this.cell_size);
-      var right  = Math.floor((location.x + distance)/this.cell_size);
-
+      var top    = Math.floor((location.e(2) - distance)/this.cell_size);
+      var bottom = Math.floor((location.e(2) + distance)/this.cell_size);
+      var left   = Math.floor((location.e(1) - distance)/this.cell_size);
+      var right  = Math.floor((location.e(1) + distance)/this.cell_size);
       var gameObjects = [];
       for (var y=top; y<=bottom;y++) {
         for (var x=left;x<=right;x++) {
