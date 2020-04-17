@@ -13,6 +13,7 @@ exports.ObjectManager = class {
         this.lastRenderCount = 0;
         this.next_engine_id = 0;
         this.id_to_objects = {};
+        this.to_delete = [];
     }
 
     get_object_by_id(id) {
@@ -56,6 +57,38 @@ exports.ObjectManager = class {
         this.storage_engine.insert(gameObject);
     }
 
+    delete_object (gameObject) {
+      /* Adds a gameObject to the collection that will be deleted at the
+      end of the next update
+      */
+      this.to_delete.push(gameObject);
+    }
+
+    _delete_object (gameObject) {
+      /* An internal method for deleting a gameObject*/
+      if (this.engine.server && gameObject.engine_id == -1) {
+          this.engine.clientManager.broadcast({
+              target: "object_manager",
+              type: "delete",
+              descriptor: gameObject.to_descriptor()
+          });
+      } else {
+      }
+
+      if (gameObject.engine_id != -1) {
+        delete this.id_to_objects[gameObject.engine_id];
+      }
+
+      var index = this.gameObjects.indexOf(gameObject);
+      if (index > -1) {
+        this.gameObjects.splice(index, 1);
+      } else {
+        throw "Unable to find gameObject to delete";
+      }
+
+      this.storage_engine.remove(gameObject);
+    }
+
     render (viewVolume) {
         var renderCount = 0;
         renderCount += this.storage_engine.render(this.engine.context, 0, viewVolume); // Render layer 1
@@ -69,6 +102,11 @@ exports.ObjectManager = class {
           this.storage_engine.clean();
           this.storage_engine.cull();
         }
+
+        for(let gameObject of this.to_delete) {
+          this._delete_object(gameObject);
+        }
+        this.to_delete = []
     }
 
     clear() {
@@ -158,6 +196,10 @@ class StorageEngine {
     get_neighbours(location, distance) {
       throw "Under lying data structure not implemented"
     }
+
+    remove(gameObject) {
+      throw "Under lying data structure not implemented"
+    }
 }
 
 class SparseGrid extends StorageEngine {
@@ -187,11 +229,21 @@ class SparseGrid extends StorageEngine {
       }
       this.cells[key].push(gameObject);
       this.gameObjects.add(gameObject);
-      console.log("inserting at", key)
     }
 
     remove (gameObject) {
-
+      var key = this.location_to_cell_key(gameObject.location);
+      if (key in this.cells) {
+        var index = this.cells[key].indexOf(gameObject);
+        if (index > -1) {
+          this.cells[key].splice(index, 1);
+        } else {
+          throw "This game obejct does not exist in the cell it was expected";
+        }
+      } else {
+        throw "There is no cell where this object should exist";
+      }
+      this.gameObjects.delete(gameObject);
     }
 
     render (context, layer, viewVolume) {

@@ -98,6 +98,10 @@ exports.GameObject = class {
         }
     }
 
+    delete () {
+      this.engine.objectManager.delete_object(this);
+    }
+
     getLight () {
         if (this.light) {
             this.light.location = this.location;
