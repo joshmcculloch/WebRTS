@@ -13,7 +13,7 @@ exports.ObjectManager = class {
         this.lastRenderCount = 0;
         this.next_engine_id = 0;
         this.id_to_objects = {};
-        this.to_delete = [];
+        this.to_delete = new Set();
     }
 
     get_object_by_id(id) {
@@ -61,7 +61,7 @@ exports.ObjectManager = class {
       /* Adds a gameObject to the collection that will be deleted at the
       end of the next update
       */
-      this.to_delete.push(gameObject);
+      this.to_delete.add(gameObject);
     }
 
     _delete_object (gameObject) {
@@ -106,7 +106,7 @@ exports.ObjectManager = class {
         for(let gameObject of this.to_delete) {
           this._delete_object(gameObject);
         }
-        this.to_delete = []
+        this.to_delete = new Set();
     }
 
     clear() {
@@ -275,6 +275,9 @@ class SparseGrid extends StorageEngine {
         for (let gameObject of this.gameObjects) {
 
           var init_key = this.location_to_cell_key(gameObject.location);
+          if (this.cells[init_key].indexOf(gameObject) == -1) {
+            throw "GameObject not in expected cell, did it move outside of it's update method?";
+          }
           gameObject.update(delta_time)
           var updated_key = this.location_to_cell_key(gameObject.location);
 
@@ -291,7 +294,7 @@ class SparseGrid extends StorageEngine {
               this.cells[updated_key].push(gameObject);
             }
             else {
-              throw "Unable to find gameobjects in initial cell"
+              throw "Unable to find gameobjects in initial cell";
             }
           }
         }
