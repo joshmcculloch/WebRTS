@@ -105,14 +105,11 @@ exports.InputManager = class {
                 }
                 break;
         }
-        console.log(this.mouseLeftDown,this.mouseRightDown);
     }
 
     triggerObjectOnClick(e) {
-        //console.log("Click:",e);
         var screenLocation = $V([e.clientX, e.clientY,0]);
         var worldLocation = this.engine.camera.cameraToWorld(screenLocation);
-        console.log(worldLocation.e(1),worldLocation.e(2));
 
         var selectedGameObject = this.engine.objectManager.get_object_at_location(worldLocation)
         if (selectedGameObject) {
@@ -120,7 +117,6 @@ exports.InputManager = class {
         } else {
 
         }
-
     }
 
 
