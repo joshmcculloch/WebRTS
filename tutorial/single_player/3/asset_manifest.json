@@ -1,0 +1,54 @@
+[
+    {
+        "reference": "ball",
+        "type": "image",
+        "filename": "images/ball.png",
+        "origin": {
+            "x": -20,
+            "y": -20
+        }
+    },
+    {
+        "reference": "amb1",
+        "type": "audio",
+        "filename": "sound/amb1.mp3"
+    },
+    {
+        "reference": "shot",
+        "type": "audio",
+        "filename": "sound/shot.mp3"
+    },
+    {
+        "reference": "zombie1",
+        "type": "audio",
+        "filename": "sound/zombie1.mp3"
+    },
+    {
+        "reference": "zombie2",
+        "type": "audio",
+        "filename": "sound/zombie2.mp3"
+    },
+    {
+        "reference": "zombie3",
+        "type": "audio",
+        "filename": "sound/zombie3.mp3"
+    },
+    {
+        "reference": "player_left",
+        "type": "image",
+        "filename": "images/character_left.png",
+        "origin": {
+            "x": -5,
+            "y": -17
+        }
+    },
+    {
+        "reference": "player_right",
+        "type": "image",
+        "filename": "images/character_right.png",
+        "origin": {
+            "x": -5,
+            "y": -17
+        }
+    }
+]
