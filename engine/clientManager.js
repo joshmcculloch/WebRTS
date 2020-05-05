@@ -84,7 +84,7 @@ exports.ClientManager = class  {
         });
         var self = this;
         this.server.listen(8192, function () {
-            console.log((new Date()) + ' Server is listening on port 8080');
+            console.log((new Date()) + ' Server is listening on port 8192');
         });
 
         this.wsServer = new WebSocketServer({
@@ -112,7 +112,7 @@ exports.ClientManager = class  {
             this.clients[c].send(object);
             count += 1;
         }
-        console.log("Broadcast:", count);
+        //console.log("Broadcast:", count);
     }
 
 };
@@ -149,7 +149,7 @@ class Client {
         if(typeof message.callbackID !== 'undefined') {
             this.send({target: "network_manager", callbackID: message.callbackID, authenticated: this.authenticated});
         }
-        
+
     }
 
     signup (message) {
@@ -167,7 +167,7 @@ class Client {
             this.send({target: "network_manager", callbackID: message.callbackID, success: success});
         }
     }
-    
+
     subscribe () {
         for (let go of this.engine.objectManager.gameObjects) {
              this.send({
