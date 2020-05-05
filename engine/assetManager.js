@@ -59,12 +59,14 @@ exports.AssetManager = class{
     }
 
     play_audio_once(reference) {
-      var cAudio = this.audio[reference].cloneNode();
-      cAudio.play();
+      if (reference in this.audio) {
+        var cAudio = this.audio[reference].cloneNode();
+        cAudio.play();
+      }
     }
 
     play_audio_loop(reference) {
-      if (this.audio[reference].paused) {
+      if (reference in this.audio && this.audio[reference].paused) {
         this.audio[reference].play();
         this.audio[reference].loop = true;
       }
