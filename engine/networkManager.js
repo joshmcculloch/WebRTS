@@ -77,4 +77,8 @@ exports.NetworkManager = class {
         this.conn.send(JSON.stringify(object));
     }
 
+    connected() {
+      return this.conn.readyState == WebSocket.OPEN;
+    }
+
 };

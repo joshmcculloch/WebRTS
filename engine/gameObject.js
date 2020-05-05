@@ -1,43 +1,53 @@
 var ab = require("./aabb.js");
+var sylvester = require("sylvester");
 
 exports.GameObject = class {
     constructor (engine, image_identifier, location=$V([0,0,0])) {
         this.engine_id=-1;
-        this.ownerID = -1;
         this.object_name = "base_object";
         this.engine = engine;
-        this.image_identifier = image_identifier;
         this.location = location;
-        this.rotation = 0;
+        this.members = {
+          ownerID: -1,
+          image_identifier: image_identifier,
+          rotation: 0,
+        }
         this.last_update = new Date().getTime();
         this.light = false;
     }
 
     to_descriptor() {
+        var members = {};
+        for (var key in this.members) {
+          if (this.members[key] instanceof sylvester.Vector) {
+            members[key] = {type: "vec", elements: this.members[key].elements}
+          } else {
+            members[key] = this.members[key]
+          }
+        }
         return {
             engine_id: this.engine_id,
             object_name: this.object_name,
-            image_identifier: this.image_identifier,
             ownerID: this.ownerID,
-            location: {
-                x: this.location.e(1),
-                y: this.location.e(2),
-                z: this.location.e(3)
-            },
-            rotation: this.rotation
+            location: {type: "vec", elements: this.location.elements},
+            members: members
         }
     }
 
     from_descriptor (description) {
         this.engine_id = description.engine_id;
         this.object_name = description.object_name;
-        this.image_identifier = description.image_identifier;
         this.ownerID = description.ownerID;
-        this.location = $V([
-            description.location.x,
-            description.location.y,
-            description.location.z])
-        this.rotation = description.rotation;
+        this.location = $V(description.location["elements"]);
+        for (var key in description.members) {
+          if (typeof description.members[key] == "object") {
+            if (description.members[key]["type"] == "vec") {
+              this.members[key] = $V(description.members[key]["elements"]);
+            }
+          } else {
+            this.members[key] = description.members[key]
+          }
+        }
     }
 
     call_remote (method_name, parameters) {
@@ -91,10 +101,10 @@ exports.GameObject = class {
     draw () {
         this.engine.context.translate(this.location.e(1),this.location.e(2));
         this.engine.context.rotate(this.rotation);
-        this.engine.assetManager.drawImage(this.image_identifier);
+        this.engine.assetManager.drawImage(this.members.image_identifier);
 
         if (this.engine.debug == 1) {
-            this.engine.assetManager.drawImageAABB(this.image_identifier);
+            this.engine.assetManager.drawImageAABB(this.members.image_identifier);
         }
     }
 
