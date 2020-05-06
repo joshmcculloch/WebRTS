@@ -1,6 +1,8 @@
 /*
 The ObjectManager keeps track of all current GameObjects.
  */
+
+var Messages = require('./messages.js');
 var ab = require("./aabb.js");
 exports.ObjectManager = class {
 
@@ -30,6 +32,7 @@ exports.ObjectManager = class {
     }
     create_from_descriptor (description) {
         if (this.object_library[description.object_name]) {
+            console.assert(!(description.engine_id in this.id_to_objects),"Object with id already exists",description)
             var obj  = new this.object_library[description.object_name](this.engine);
             obj.from_descriptor(description);
             this.add_object(obj);
@@ -39,12 +42,7 @@ exports.ObjectManager = class {
     add_object (gameObject) {
         if (this.engine.server && gameObject.engine_id == -1) {
             gameObject.engine_id = this.next_engine_id++;
-            this.engine.clientManager.broadcast({
-                target: "object_manager",
-                type: "instansiate",
-                descriptor: gameObject.to_descriptor()
-            });
-
+            this.engine.clientManager.broadcast(Messages.instantiate(gameObject));
         } else {
         }
 
@@ -65,13 +63,11 @@ exports.ObjectManager = class {
     }
 
     _delete_object (gameObject) {
-      /* An internal method for deleting a gameObject*/
-      if (this.engine.server && gameObject.engine_id == -1) {
-          this.engine.clientManager.broadcast({
-              target: "object_manager",
-              type: "delete",
-              descriptor: gameObject.to_descriptor()
-          });
+      /* An internal method for deleting a gameObject.
+      This is called after all gameobjects have been updated. It would be
+      problematic to delete gameObjects mid update cycle.*/
+      if (this.engine.server && gameObject.engine_id != -1) {
+          this.engine.clientManager.broadcast(Messages.delete(gameObject));
       } else {
       }
 

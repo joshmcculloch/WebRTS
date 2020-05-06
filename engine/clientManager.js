@@ -2,6 +2,7 @@ var http = require('http');
 var WebSocketServer = require('websocket').server;
 var crypto = require('crypto');
 var fs = require('fs');
+var Messages = require('./messages.js');
 
 exports.UserManager = class {
 
@@ -170,11 +171,7 @@ class Client {
 
     subscribe () {
         for (let go of this.engine.objectManager.gameObjects) {
-             this.send({
-                 target: "object_manager",
-                 type: "instansiate",
-                 descriptor: go.to_descriptor()
-             });
+             this.send(Messages.instantiate(go));
         }
     }
 
