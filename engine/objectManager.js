@@ -274,7 +274,8 @@ class SparseGrid extends StorageEngine {
           if (this.cells[init_key].indexOf(gameObject) == -1) {
             throw "GameObject not in expected cell, did it move outside of it's update method?";
           }
-          gameObject.update(delta_time)
+          gameObject.exec_remote_calls();
+          gameObject.update(delta_time);
           var updated_key = this.location_to_cell_key(gameObject.location);
 
           // if update the gameobjects cell if it has moved outside its initial one

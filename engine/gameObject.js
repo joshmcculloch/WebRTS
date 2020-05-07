@@ -14,6 +14,7 @@ exports.GameObject = class {
         }
         this.last_update = new Date().getTime();
         this.light = false;
+        this.remote_call_queue = [];
     }
 
     to_descriptor() {
@@ -70,9 +71,17 @@ exports.GameObject = class {
     }
 
     recv_remote_call(method_name, parameters) {
-        if(this[method_name]) {
-            this[method_name].apply(this,parameters);
+        this.remote_call_queue.push({method_name:method_name, parameters:parameters})
+    }
+
+    exec_remote_calls() {
+      var self = this;
+      this.remote_call_queue.forEach((call)=>{
+        if(self[call.method_name]) {
+            self[call.method_name].apply(this,call.parameters);
         }
+      });
+      this.remote_call_queue = [];
     }
 
     clientOwned (userID) {
