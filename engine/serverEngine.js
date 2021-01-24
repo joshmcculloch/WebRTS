@@ -20,7 +20,13 @@ exports.ServerEngine = class extends Engine.BaseEngine {
         for (let go of this.objectManager.gameObjects) {
             descriptors.push(go.to_descriptor());
         }
-        var json = JSON.stringify(descriptors,null,1);
+        var engine_state = {
+          next_engine_id: this.objectManager.next_engine_id
+        }
+        var json = JSON.stringify(
+          {engine_state: engine_state,
+          "game_objects": descriptors},
+          null,1);
         if (!async) {
             fs.writeFileSync('gamestate.json', json, 'utf8');
         } else {
@@ -32,7 +38,10 @@ exports.ServerEngine = class extends Engine.BaseEngine {
         if (fs.existsSync('gamestate.json')) {
             try {
                 var json = fs.readFileSync('gamestate.json', 'utf8');
-                var descriptors = JSON.parse(json);
+                var gamestate = JSON.parse(json);
+                var engine_state = gamestate.engine_state
+                this.objectManager.next_engine_id = engine_state.next_engine_id;
+                var descriptors = gamestate.game_objects
                 for (let desc of descriptors) {
                     this.objectManager.create_from_descriptor(desc);
                 }
