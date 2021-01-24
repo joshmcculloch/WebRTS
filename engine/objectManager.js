@@ -62,27 +62,33 @@ exports.ObjectManager = class {
       this.to_delete.add(gameObject);
     }
 
+    delete_object_by_id(id) {
+      var gameObject = this.get_object_by_id(id);
+      this.to_delete.add(gameObject);
+    }
+
     _delete_object (gameObject) {
       /* An internal method for deleting a gameObject.
       This is called after all gameobjects have been updated. It would be
       problematic to delete gameObjects mid update cycle.*/
-      if (this.engine.server && gameObject.engine_id != -1) {
-          this.engine.clientManager.broadcast(Messages.delete(gameObject));
-      } else {
-      }
-
-      if (gameObject.engine_id != -1) {
-        delete this.id_to_objects[gameObject.engine_id];
-      }
-
       var index = this.gameObjects.indexOf(gameObject);
       if (index > -1) {
         this.gameObjects.splice(index, 1);
-      } else {
-        throw "Unable to find gameObject to delete";
-      }
 
-      this.storage_engine.remove(gameObject);
+        if (this.engine.server && gameObject.engine_id != -1) {
+            this.engine.clientManager.broadcast(Messages.delete(gameObject));
+        } else {
+        }
+
+        if (gameObject.engine_id != -1) {
+          delete this.id_to_objects[gameObject.engine_id];
+        }
+
+        this.storage_engine.remove(gameObject);
+
+      } else {
+        //throw "Unable to find gameObject to delete";
+      }
     }
 
     render (viewVolume) {
