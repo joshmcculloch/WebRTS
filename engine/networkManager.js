@@ -53,6 +53,10 @@ exports.NetworkManager = class {
                     if (message.engine_id >= 0 && message.method && message.parameters) {
                         self.engine.objectManager.call_remote(message.engine_id, message.method, message.parameters);
                     }
+                } else if (message.type && message.type == "delete"){
+                    if (message.descriptor) {
+                      self.engine.objectManager.delete_object_by_id(message.descriptor.engine_id);
+                    }
                 } else {
 
                 }
