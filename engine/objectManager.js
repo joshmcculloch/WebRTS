@@ -30,12 +30,15 @@ exports.ObjectManager = class {
         var obj = new engine_class(this.engine);
         this.object_library[obj.object_name]  = engine_class;
     }
+
     create_from_descriptor (description) {
         if (this.object_library[description.object_name]) {
             console.assert(!(description.engine_id in this.id_to_objects),"Object with id already exists",description)
             var obj  = new this.object_library[description.object_name](this.engine);
             obj.from_descriptor(description);
             this.add_object(obj);
+        } else {
+            throw "Object not in object library: " + description.object_name
         }
     }
 

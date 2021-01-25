@@ -11,6 +11,7 @@ exports.BaseEngine = class {
         this.assetManager = new am.AssetManager(this);
         this.last_update = new Date().getTime()/1000;
         this.debug = 0;
+        this.current_time = new Date().getTime()/1000;
         
     }
 
@@ -21,13 +22,13 @@ exports.BaseEngine = class {
     }
 
     update() {
-        var current_time = new Date().getTime()/1000;
-        var delta_time = current_time - this.last_update;
+        this.current_time = new Date().getTime()/1000;
+        var delta_time = this.current_time - this.last_update;
 
         this.objectManager.update(delta_time);
 
         setTimeout(this.update.bind(this),10);
-        this.last_update = current_time;
+        this.last_update = this.current_time;
     }
 
 }

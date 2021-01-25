@@ -82,8 +82,8 @@ exports.ClientEngine = class extends Engine.BaseEngine {
     }
 
     update() {
-        var current_time = new Date().getTime()/1000;
-        var delta_time = current_time - this.last_update;
+        this.current_time = new Date().getTime()/1000;
+        var delta_time = this.current_time - this.last_update;
         this.updateCanvasSize();
         this.objectManager.update(delta_time);
         this.render();
@@ -99,7 +99,7 @@ exports.ClientEngine = class extends Engine.BaseEngine {
             "Mouse: ("+this.inputManager.mousePos.e(1)+","+this.inputManager.mousePos.e(2)+")");
 
         setTimeout(this.update.bind(this),10);
-        this.last_update = current_time;
+        this.last_update = this.current_time;
     }
 
 };

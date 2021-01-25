@@ -198,7 +198,7 @@ class Client {
                             //console.log("attempting remote call", messageData.method, messageData.parameters);
                             this.engine.objectManager.call_remote(messageData.engine_id, messageData.method, messageData.parameters);
                         } else {
-                            console.log(this.engine.objectManager.id_to_objects[messageData.engine_id].ownerID, this.userID);
+                            console.log(this.engine.objectManager.id_to_objects[messageData.engine_id].members.ownerID, this.userID);
                             console.log("User attempted remote call on non-owned object!");
                         }
                     } else {
