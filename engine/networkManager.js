@@ -25,8 +25,6 @@ exports.NetworkManager = class {
         };
 
         this.conn.onmessage = function (evt) {
-            //console.log("message");
-
             var message = JSON.parse(evt.data);
             if (message.target && message.target == "network_manager") {
                 if (typeof message.callbackID !== 'undefined') {
@@ -44,10 +42,6 @@ exports.NetworkManager = class {
                 if (message.type && message.type == "instantiate") {
                     if (message.descriptor) {
                         self.engine.objectManager.create_from_descriptor(message.descriptor);
-                    }
-                } else if (message.type && message.type == "sync") {
-                    if (message.descriptor) {
-                        throw "sync handler routine not implemented"
                     }
                 } else if (message.type && message.type == "call_remote") {
                     if (message.engine_id >= 0 && message.method && message.parameters) {

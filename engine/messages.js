@@ -13,8 +13,10 @@ exports.sync = function(gameObject) {
   */
   return {
     target: "object_manager",
-    type: "sync",
-    descriptor: gameObject.to_descriptor()
+    type: "call_remote",
+    engine_id: gameObject.engine_id,
+    method: "from_descriptor",
+    parameters: [gameObject.to_descriptor()]
   };
 }
 
@@ -28,12 +30,14 @@ exports.delete = function(gameObject) {
   };
 }
 
-exports.call_remote= function(method, parameters) {
+exports.call_remote= function(engine_id, method, parameters) {
   /* SERVER <--> CLIENT
   */
   return {
     target: "object_manager",
     type: "call_remote",
-    descriptor: gameObject.to_descriptor()
-  };
+    engine_id: engine_id,
+    method: method,
+    parameters: parameters
+  }
 }

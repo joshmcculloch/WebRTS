@@ -1,5 +1,6 @@
 var ab = require("./aabb.js");
 var sylvester = require("sylvester");
+var Messages = require('./messages.js');
 
 exports.GameObject = class {
     constructor (engine, image_identifier, location=$V([0,0,0])) {
@@ -29,7 +30,6 @@ exports.GameObject = class {
         return {
             engine_id: this.engine_id,
             object_name: this.object_name,
-            ownerID: this.ownerID,
             location: {type: "vec", elements: this.location.elements},
             members: members
         }
@@ -52,25 +52,37 @@ exports.GameObject = class {
     }
 
     call_remote (method_name, parameters) {
+        for(var i=0; i<parameters.length; i++) {
+            if (parameters[i] instanceof sylvester.Vector) {
+                parameters[i] = {type: "vec", elements: parameters[i].elements}
+            }
+        }
         if (this.engine.server) {
-            this.engine.clientManager.broadcast({
-                target: "object_manager",
-                type: "call_remote",
-                engine_id: this.engine_id,
-                method: method_name,
-                parameters: parameters
-            });
+            this.engine.clientManager.broadcast(
+                Messages.call_remote(this.engine_id, method_name, parameters));
         } else if (this.engine.client){
-            this.engine.networkManager.send({
-                type: "call_remote",
-                engine_id: this.engine_id,
-                method: method_name,
-                parameters: parameters
-            });
+            this.engine.networkManager.send(
+                Messages.call_remote(this.engine_id, method_name, parameters));
         }
     }
 
+    sync() {
+        /* Synchronises the server's object state with the clients
+        */
+       if (this.engine.server) {
+        this.engine.clientManager.broadcast(
+            Messages.sync(this));
+       }
+    }
+
     recv_remote_call(method_name, parameters) {
+        for(var i=0; i<parameters.length; i++) {
+            if (typeof parameters[i] == "object") {
+                if (parameters[i]["type"] == "vec") {
+                    parameters[i] = $V(parameters[i]["elements"]);
+                }
+            }
+        }
         this.remote_call_queue.push({method_name:method_name, parameters:parameters})
     }
 
@@ -85,7 +97,7 @@ exports.GameObject = class {
     }
 
     clientOwned (userID) {
-        return this.ownerID == userID;
+        return this.members.ownerID == userID;
     }
 
     /*
