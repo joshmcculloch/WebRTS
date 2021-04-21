@@ -21,7 +21,10 @@ exports.GameObject = class {
     to_descriptor() {
         var members = {};
         for (var key in this.members) {
-          if (this.members[key] instanceof sylvester.Vector) {
+            
+          if (this.members[key].elements){
+            // Checks to see if object is an instance of sylvester.Vector. Can't use
+            // instanceof because constructor is in a different module.
             members[key] = {type: "vec", elements: this.members[key].elements}
           } else {
             members[key] = this.members[key]
