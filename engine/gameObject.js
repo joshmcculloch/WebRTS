@@ -47,6 +47,8 @@ exports.GameObject = class {
           if (typeof description.members[key] == "object") {
             if (description.members[key]["type"] == "vec") {
               this.members[key] = $V(description.members[key]["elements"]);
+            } else {
+                this.members[key] = description.members[key]
             }
           } else {
             this.members[key] = description.members[key]
@@ -144,7 +146,7 @@ exports.GameObject = class {
     }
 
     getAABB () {
-        var image = this.engine.assetManager.getImage(this.image_identifier);
+        var image = this.engine.assetManager.getImage(this.members.image_identifier);
         if (image != undefined) {
             var aabb = image.getAABB()
             aabb.x += this.location.e(1);
@@ -152,7 +154,8 @@ exports.GameObject = class {
             return aabb;
         }
         else {
-            throw "where do you want me to get an aabb from?";
+            throw new Error("where do you want me to get an aabb from?");
+            console.warn("No source of AABB for ", this.object_name)
             return new ab.AABB(this.location.e(1),this.location.e(2),10,10);
         }
     }
