@@ -158,13 +158,12 @@ exports.ObjectManager = class {
     }
 
     get_object_at_location(worldLocation) {
-        var maxY = 0;
+        var maxY = -9999999;
         var maxLayer = 0;
         var selectedGameObject = false;
         for (let gameObject of this.get_neighbours(worldLocation, 200)) {
-
             if (gameObject.getAABB().is_inside(worldLocation)) {
-                if ((gameObject.location.e(2) > maxY && gameObject.location.e(3) == maxLayer )
+                 if ((gameObject.location.e(2) > maxY && gameObject.location.e(3) == maxLayer )
                     || gameObject.location.e(3) > maxLayer) {
                     selectedGameObject = gameObject;
                     maxY = selectedGameObject.location.e(2);
